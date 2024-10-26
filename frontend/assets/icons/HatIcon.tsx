@@ -1,15 +1,16 @@
+import { colors } from '@/constants/colors';
 import { FC } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 interface HatIconProps {
   color?: string;
   width?: number;
   height?: number;
-  style?: ViewStyle | ViewStyle[];
+  style?: StyleProp<ViewStyle>;
 }
 
-const HatIcon: FC<HatIconProps> = ({ color = 'black', width = 135, height = 52, style }) => {
+const HatIcon: FC<HatIconProps> = ({ color = colors.black, width = 135, height = 52, style }) => {
   return (
     <View style={style}>
       <Svg width={width} height={height} viewBox="0 0 135 52" fill={color}>

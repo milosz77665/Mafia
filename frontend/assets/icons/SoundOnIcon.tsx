@@ -1,14 +1,15 @@
+import { colors } from '@/constants/colors';
 import { FC } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 interface SoundOffIconProps {
   color?: string;
   size?: number;
-  style?: ViewStyle | ViewStyle[];
+  style?: StyleProp<ViewStyle>;
 }
 
-const SoundOffIcon: FC<SoundOffIconProps> = ({ color = 'black', size = 32, style }) => {
+const SoundOffIcon: FC<SoundOffIconProps> = ({ color = colors.black, size = 32, style }) => {
   return (
     <View style={style}>
       <Svg width={size} height={size} fill={color} viewBox="0 0 256 256">
