@@ -1,5 +1,5 @@
 import HatIcon from '@/assets/icons/HatIcon';
-import Button from '@/components/CustomButton';
+import CustomButton from '@/components/CustomButton';
 import CustomText from '@/components/CustomText';
 import { StyleSheet, View } from 'react-native';
 
@@ -31,10 +31,10 @@ const Index = () => {
       <HatIcon width={170} height={80} />
       <CustomText style={style.header}>Mafia</CustomText>
       <View style={style.buttonsContainer}>
-        <Button onPress={() => {}}>Host Game</Button>
-        <Button onPress={() => {}} buttonStyle={style.joinGameButton}>
+        <CustomButton onPress={() => {}}>Host Game</CustomButton>
+        <CustomButton onPress={() => {}} buttonStyle={style.joinGameButton}>
           Join Game
-        </Button>
+        </CustomButton>
       </View>
     </View>
   );
