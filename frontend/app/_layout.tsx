@@ -6,7 +6,6 @@ import { Provider } from 'react-redux';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import MusicOnOffButton from '@/components/MusicOnOffButton';
 import AutoplayMusic from '@/components/AutoplayMusic';
 
 SplashScreen.preventAutoHideAsync();
@@ -17,15 +16,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     backgroundColor: colors.white,
-  },
-
-  settingsContainer: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    width: '100%',
-    paddingRight: 20,
-    paddingTop: 40,
   },
 });
 
@@ -46,11 +36,8 @@ const RootLayout = () => {
 
   return (
     <Provider store={store}>
+      <AutoplayMusic />
       <View style={style.mainContainer}>
-        <View style={style.settingsContainer}>
-          <MusicOnOffButton />
-          <AutoplayMusic />
-        </View>
         <Slot />
       </View>
     </Provider>

@@ -1,6 +1,7 @@
 import HatIcon from '@/assets/icons/HatIcon';
 import CustomButton from '@/components/CustomButton';
 import CustomText from '@/components/CustomText';
+import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 const style = StyleSheet.create({
@@ -31,8 +32,19 @@ const Index = () => {
       <HatIcon width={170} height={80} />
       <CustomText style={style.header}>Mafia</CustomText>
       <View style={style.buttonsContainer}>
-        <CustomButton onPress={() => {}}>Host Game</CustomButton>
-        <CustomButton onPress={() => {}} buttonStyle={style.joinGameButton}>
+        <CustomButton
+          onPress={() => {
+            router.replace('/host');
+          }}
+        >
+          Host Game
+        </CustomButton>
+        <CustomButton
+          onPress={() => {
+            router.replace('/join');
+          }}
+          buttonStyle={style.joinGameButton}
+        >
           Join Game
         </CustomButton>
       </View>
