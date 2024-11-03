@@ -22,6 +22,7 @@ const style = StyleSheet.create({
 const RootLayout = () => {
   const [loaded, error] = useFonts({
     'Lora': require('../assets/fonts/Lora-Regular.ttf'),
+    'Arial': require('../assets/fonts/ArialTh.ttf'),
   });
 
   useEffect(() => {
