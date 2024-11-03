@@ -5,6 +5,8 @@ import { RootState } from '@/store';
 
 const AutoplayMusic: FC = () => {
   const audioPath = '../assets/audio/super_secret_spy.mp3';
+  // '../assets/audio/isnt_that_strange.mp3';
+  //'../assets/audio/sneak_peek.mp3'
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isTryingToPlay, setIsTryingToPlay] = useState(false);
