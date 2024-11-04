@@ -26,7 +26,7 @@ const style = StyleSheet.create({
   },
 
   gameNameContainer: {
-    marginTop: 20,
+    marginTop: 80,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -45,8 +45,7 @@ const style = StyleSheet.create({
     flexDirection: 'column',
   },
 
-  sliderCurrentNumber: {
-    marginTop: 10,
+  sliderLabel: {
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Arial',
@@ -56,6 +55,10 @@ const style = StyleSheet.create({
     width: 220,
     height: 20,
     transform: [{ scaleY: 1.2 }],
+  },
+
+  sliderCurrentNumber: {
+    marginTop: 10,
   },
 
   ratioInfoContainer: {
@@ -68,7 +71,11 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 175,
+    marginTop: 100,
+  },
+
+  backButton: {
+    marginTop: 30,
   },
 });
 
@@ -98,7 +105,7 @@ const Host = () => {
       </View>
 
       <View style={style.gameNameContainer}>
-        <CustomText style={style.label}> Game name</CustomText>
+        <CustomText style={style.label}>Game name</CustomText>
         <CustomInput
           containerStyle={style.input}
           inputStyle={{ borderColor: isFocused ? colors.black : 'red' }}
@@ -110,7 +117,7 @@ const Host = () => {
       </View>
 
       <View style={style.lobbySizeContainer}>
-        <CustomText style={style.label}> Set lobby size</CustomText>
+        <CustomText style={style.label}>Set lobby size</CustomText>
         <CustomText style={style.sliderCurrentNumber}>{sliderValue}</CustomText>
         <CustomSlider
           sliderStyle={style.slider}
@@ -136,7 +143,11 @@ const Host = () => {
       </View>
 
       <View style={style.buttonsContainer}>
+        <CustomButton disabled={text === ''} onPress={() => {}}>
+          Create Lobby
+        </CustomButton>
         <CustomButton
+          buttonStyle={style.backButton}
           onPress={() => {
             router.replace('/');
           }}
