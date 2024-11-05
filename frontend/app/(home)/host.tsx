@@ -51,6 +51,10 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
   },
 
+  sliderContainer: {
+    marginTop: 10,
+  },
+
   slider: {
     width: 220,
     height: 20,
@@ -59,6 +63,9 @@ const style = StyleSheet.create({
 
   sliderCurrentNumber: {
     marginTop: 10,
+    fontSize: 18,
+    fontFamily: 'Arial',
+    fontWeight: 'bold',
   },
 
   ratioInfoContainer: {
@@ -67,7 +74,12 @@ const style = StyleSheet.create({
   },
 
   citizensNumber: {
+    fontWeight: 'bold',
     marginRight: 30,
+  },
+
+  mafiaNumber: {
+    fontWeight: 'bold',
   },
 
   buttonsContainer: {
@@ -121,6 +133,7 @@ const Host = () => {
         <CustomText style={style.sliderCurrentNumber}>{sliderValue}</CustomText>
         <CustomSlider
           sliderStyle={style.slider}
+          sliderContainerStyle={style.sliderContainer}
           value={sliderValue}
           onValueChange={(value) => {
             setSliderValue(value);
@@ -139,7 +152,7 @@ const Host = () => {
         <CustomText style={[style.label, style.citizensNumber]}>{citizenCount(sliderValue)}</CustomText>
 
         <CustomText style={style.label}>Mafia: </CustomText>
-        <CustomText style={style.label}>{mafiaCount(sliderValue)}</CustomText>
+        <CustomText style={[style.label, style.mafiaNumber]}>{mafiaCount(sliderValue)}</CustomText>
       </View>
 
       <View style={style.buttonsContainer}>
