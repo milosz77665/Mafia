@@ -1,7 +1,6 @@
 import CustomButton from '@/components/CustomButton';
 import CustomText from '@/components/CustomText';
 import CustomInput from '@/components/CustomInput';
-import { colors } from '@/constants/colors';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useState } from 'react';
@@ -31,11 +30,13 @@ const style = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'column',
   },
+
   inputContainer: {
     marginTop: 10,
     height: 40,
     width: 120,
   },
+
   input: {
     textAlign: 'auto',
     height: 35,
@@ -70,9 +71,9 @@ const Join = () => {
           inputStyle={style.input}
           value={text}
           placeholder="#2137"
-          onChangeText={setText}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onChangeText={(value) => {
+            setText(value);
+          }}
         />
       </View>
 

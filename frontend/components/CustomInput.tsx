@@ -43,7 +43,7 @@ const CustomInput: FC<CustomInputProps> = ({
       <TextInput
         style={[styles.input, inputStyle]}
         value={value}
-        onChangeText={(text) => onChangeText(text)}
+        onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.grey}
         onFocus={onFocus}
