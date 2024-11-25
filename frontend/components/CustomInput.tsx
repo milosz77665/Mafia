@@ -1,11 +1,9 @@
 import { FC } from 'react';
-import { StyleSheet, TextInput, StyleProp, ViewStyle, TextStyle, View } from 'react-native';
+import { StyleSheet, TextInput, StyleProp, ViewStyle, TextStyle, View, KeyboardTypeOptions } from 'react-native';
 import { colors } from '@/constants/colors';
 
 const styles = StyleSheet.create({
   container: {
-    minWidth: 200,
-    maxWidth: 200,
     height: 25,
     padding: 2,
     borderRadius: 1,
@@ -27,6 +25,8 @@ interface CustomInputProps {
   inputStyle?: StyleProp<TextStyle>;
   onFocus?: () => void;
   onBlur?: () => void;
+  maxLength?: number;
+  keyboardType?: KeyboardTypeOptions;
 }
 
 const CustomInput: FC<CustomInputProps> = ({
@@ -37,6 +37,8 @@ const CustomInput: FC<CustomInputProps> = ({
   inputStyle,
   onFocus,
   onBlur,
+  maxLength,
+  keyboardType,
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
@@ -48,6 +50,8 @@ const CustomInput: FC<CustomInputProps> = ({
         placeholderTextColor={colors.grey}
         onFocus={onFocus}
         onBlur={onBlur}
+        maxLength={maxLength}
+        keyboardType={keyboardType}
       />
     </View>
   );

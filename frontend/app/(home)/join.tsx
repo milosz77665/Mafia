@@ -24,7 +24,7 @@ const style = StyleSheet.create({
   },
 
   gameIdContainer: {
-    marginTop: 80,
+    marginTop: 100,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -34,14 +34,14 @@ const style = StyleSheet.create({
   inputContainer: {
     marginTop: 10,
     height: 40,
-    width: 120,
   },
 
   input: {
-    textAlign: 'auto',
+    textAlign: 'center',
     height: 35,
     fontSize: 24,
     fontFamily: 'Arial',
+    width: 100,
   },
 
   buttonsContainer: {
@@ -65,21 +65,23 @@ const Join = () => {
       </View>
 
       <View style={style.gameIdContainer}>
-        <CustomText style={style.label}> Game ID</CustomText>
+        <CustomText style={style.label}>Game ID</CustomText>
         <CustomInput
           containerStyle={style.inputContainer}
           inputStyle={style.input}
           value={text}
-          placeholder="#2137"
+          placeholder="12345"
           onChangeText={(value) => {
-            setText(value);
+            setText(value.replace(/[^0-9#]/g, ''));
           }}
+          maxLength={5}
+          keyboardType="numeric"
         />
       </View>
 
       <View style={style.buttonsContainer}>
         <CustomButton disabled={text === ''} onPress={() => {}}>
-          Search
+          Continue
         </CustomButton>
 
         <CustomButton
