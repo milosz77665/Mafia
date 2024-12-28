@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { StyleSheet, TextInput, StyleProp, ViewStyle, TextStyle, View, KeyboardTypeOptions } from 'react-native';
 import { colors } from '@/constants/colors';
+import { Platform } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -9,11 +10,13 @@ const styles = StyleSheet.create({
     borderRadius: 1,
     backgroundColor: colors.lightGrey,
     borderColor: colors.grey,
-    borderWidth: 1,
+    borderWidth: 1
+  
   },
   input: {
     fontSize: 16,
     color: colors.black,
+    ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
   },
 });
 
@@ -38,7 +41,7 @@ const CustomInput: FC<CustomInputProps> = ({
   onFocus,
   onBlur,
   maxLength,
-  keyboardType,
+  keyboardType
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
