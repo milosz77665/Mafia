@@ -14,6 +14,26 @@ const style = StyleSheet.create({
     flex: 1,
   },
 
+  nickContainer: {
+    marginTop: 40,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+  },
+
+  nickInputContainer: {
+    marginTop: 10,
+    height: 40,
+    minWidth: 120
+  },
+  nickInput: {
+    textAlign: 'center',
+    height: 35,
+    fontSize: 24,
+    fontFamily: 'Arial',
+    width: 160,
+  },
   titleText: {
     fontSize: 50,
   },
@@ -31,12 +51,12 @@ const style = StyleSheet.create({
     flexDirection: 'column',
   },
 
-  inputContainer: {
+  gameIdInputContainer: {
     marginTop: 10,
     height: 40,
   },
 
-  input: {
+  gameIdInput: {
     textAlign: 'center',
     height: 35,
     fontSize: 24,
@@ -55,7 +75,9 @@ const style = StyleSheet.create({
 });
 
 const Join = () => {
-  const [text, setText] = useState<string>('');
+  const [nickname, setNickname] = useState<string>('SillyGoose17');
+  const [gameId, setGameId] = useState<string>('');
+
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   return (
@@ -63,16 +85,28 @@ const Join = () => {
       <View>
         <CustomText style={style.titleText}>Join Game</CustomText>
       </View>
+      <View style={style.nickContainer}>
+        <CustomText style={style.label}>Your nickname</CustomText>
+        <CustomInput
+          containerStyle={style.nickInputContainer}
+          inputStyle={style.nickInput}
+          value={nickname}
+          onChangeText={setNickname}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          maxLength={12}
+        />
+      </View>
 
       <View style={style.gameIdContainer}>
         <CustomText style={style.label}>Game ID</CustomText>
         <CustomInput
-          containerStyle={style.inputContainer}
-          inputStyle={style.input}
-          value={text}
+          containerStyle={style.gameIdInputContainer}
+          inputStyle={style.gameIdInput}
+          value={gameId}
           placeholder="12345"
           onChangeText={(value) => {
-            setText(value.replace(/[^0-9#]/g, ''));
+            setGameId(value.replace(/[^0-9#]/g, ''));
           }}
           maxLength={5}
           keyboardType="numeric"
@@ -80,7 +114,7 @@ const Join = () => {
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={text === ''} onPress={() => {}}>
+        <CustomButton disabled={gameId === ''} onPress={() => {}}>
           Continue
         </CustomButton>
 
