@@ -1,5 +1,5 @@
 import { colors } from '@/constants/colors';
-import store from '@/store';
+import store from '@/redux/store';
 import { Slot } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
