@@ -2,15 +2,40 @@ import { Request, Response } from 'express';
 import { User } from '../models/User';
 import { ObjectId } from 'mongodb';
 
-export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: Response) => {
-  const { nickname } = req.body;
-
+const validateNickname = (nickname: string, res: Response): boolean => {
   if (!nickname) {
-    return res.status(400).json({
+    res.status(400).json({
       error: 'Bad Request',
       message: 'Nickname is required.',
     });
+    return false;
   }
+  return true;
+};
+
+const validateObjectId = (id: string, res: Response): boolean => {
+  if (!ObjectId.isValid(id)) {
+    res.status(400).json({
+      error: 'Bad Request',
+      message: 'Invalid User ID format.',
+    });
+    return false;
+  }
+  return true;
+};
+
+const handleServerError = (error: any, message: string, res: Response) => {
+  console.log(error);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message,
+  });
+};
+
+export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: Response) => {
+  const { nickname } = req.body;
+
+  if (!validateNickname(nickname, res)) return;
 
   try {
     const user = new User({ nickname });
@@ -18,11 +43,7 @@ export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: R
 
     res.status(201).json({ id: user._id.toString(), nickname });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'An error occurred while saving to the database.',
-    });
+    handleServerError(error, 'An error occurred while saving to the database.', res);
   }
 };
 
@@ -30,19 +51,7 @@ export const updateUser = async (req: Request<{ id: string }, {}, { nickname: st
   const { id } = req.params;
   const { nickname } = req.body;
 
-  if (!ObjectId.isValid(id)) {
-    return res.status(400).json({
-      error: 'Bad Request',
-      message: 'Invalid User ID format.',
-    });
-  }
-
-  if (!nickname) {
-    return res.status(400).json({
-      error: 'Bad Request',
-      message: 'Nickname is required.',
-    });
-  }
+  if (!validateObjectId(id, res) || !validateNickname(nickname, res)) return;
 
   try {
     const user = await User.findById(id);
@@ -59,23 +68,14 @@ export const updateUser = async (req: Request<{ id: string }, {}, { nickname: st
 
     res.status(200).json({ id, nickname });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'An error occurred while updating user data.',
-    });
+    handleServerError(error, 'An error occurred while updating user data.', res);
   }
 };
 
 export const deleteUser = async (req: Request<{ id: string }, {}, {}>, res: Response) => {
   const { id } = req.params;
 
-  if (!ObjectId.isValid(id)) {
-    return res.status(400).json({
-      error: 'Bad Request',
-      message: 'Invalid User ID format.',
-    });
-  }
+  if (!validateObjectId(id, res)) return;
 
   try {
     const user = await User.findByIdAndDelete(id);
@@ -89,10 +89,6 @@ export const deleteUser = async (req: Request<{ id: string }, {}, {}>, res: Resp
 
     res.status(200).json({ id });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: 'An error occurred while updating user data.',
-    });
+    handleServerError(error, 'An error occurred while deleting user data.', res);
   }
 };
