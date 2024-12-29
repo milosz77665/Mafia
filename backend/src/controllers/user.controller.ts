@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../models/User';
+import { ObjectId } from 'mongodb';
 
 export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: Response) => {
   const { nickname } = req.body;
@@ -15,7 +16,7 @@ export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: R
     const user = new User({ nickname });
     await user.save();
 
-    res.status(201).json({ uid: user._id.toString(), nickname });
+    res.status(201).json({ id: user._id.toString(), nickname });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -26,8 +27,15 @@ export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: R
 };
 
 export const updateUser = async (req: Request<{ id: string }, {}, { nickname: string }>, res: Response) => {
-  const { id: uid } = req.params;
+  const { id } = req.params;
   const { nickname } = req.body;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'Invalid User ID format.',
+    });
+  }
 
   if (!nickname) {
     return res.status(400).json({
@@ -37,7 +45,7 @@ export const updateUser = async (req: Request<{ id: string }, {}, { nickname: st
   }
 
   try {
-    const user = await User.findById(uid);
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({
@@ -49,7 +57,37 @@ export const updateUser = async (req: Request<{ id: string }, {}, { nickname: st
     user.nickname = nickname;
     await user.save();
 
-    res.status(200).json({ uid, nickname });
+    res.status(200).json({ id, nickname });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'An error occurred while updating user data.',
+    });
+  }
+};
+
+export const deleteUser = async (req: Request<{ id: string }, {}, {}>, res: Response) => {
+  const { id } = req.params;
+
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({
+      error: 'Bad Request',
+      message: 'Invalid User ID format.',
+    });
+  }
+
+  try {
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: 'User not found.',
+      });
+    }
+
+    res.status(200).json({ id });
   } catch (error) {
     console.log(error);
     res.status(500).json({
