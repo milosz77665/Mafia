@@ -78,7 +78,6 @@ const Join = () => {
   const [nickname, setNickname] = useState<string>('SillyGoose17');
   const [gameId, setGameId] = useState<string>('');
 
-  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   return (
     <View style={style.joinContainer}>
@@ -92,8 +91,6 @@ const Join = () => {
           inputStyle={style.nickInput}
           value={nickname}
           onChangeText={setNickname}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           maxLength={12}
         />
       </View>
