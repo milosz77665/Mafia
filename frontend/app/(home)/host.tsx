@@ -25,20 +25,30 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
   },
 
-  gameNameContainer: {
-    marginTop: 80,
+  nickContainer: {
+    marginTop: 40,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexDirection: 'column',
   },
 
-  input: {
+  nickInputContainer: {
     marginTop: 10,
+    height: 40,
+    minWidth: 120,
+  },
+
+  nickInput: {
+    textAlign: 'center',
+    height: 35,
+    fontSize: 20,
+    fontFamily: 'Arial',
+    width: 160,
   },
 
   lobbySizeContainer: {
-    marginTop: 20,
+    marginTop: 60,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -92,22 +102,10 @@ const style = StyleSheet.create({
 });
 
 const Host = () => {
-  const [text, setText] = useState<string>('');
-  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [nickname, setNickname] = useState<string>('BabyBear67');
   const [sliderValue, setSliderValue] = useState<number>(10);
-
-  const mafiaCount = (sliderValue: number): number => {
-    if (sliderValue <= 6) return 1;
-    if (sliderValue > 6 && sliderValue <= 10) return 2;
-    if (sliderValue > 10 && sliderValue <= 14) return 3;
-    return 4;
-  };
-
-  const citizenCount = (sliderValue: number): number => {
-    if (sliderValue <= 6) return sliderValue - 1;
-    if (sliderValue > 6 && sliderValue <= 10) return sliderValue - 2;
-    if (sliderValue > 10 && sliderValue <= 14) return sliderValue - 3;
-    return sliderValue - 4;
+  const getNumberOfMafia = (numberOfPlayers: number): number => {
+    return Math.round(Math.sqrt(numberOfPlayers) / 2);
   };
 
   return (
@@ -116,15 +114,14 @@ const Host = () => {
         <CustomText style={style.titleText}>Host Game</CustomText>
       </View>
 
-      <View style={style.gameNameContainer}>
-        <CustomText style={style.label}>Game name</CustomText>
+      <View style={style.nickContainer}>
+        <CustomText style={style.label}>Your nickname</CustomText>
         <CustomInput
-          containerStyle={style.input}
-          inputStyle={{ borderColor: isFocused ? colors.black : 'red' }}
-          value={text}
-          onChangeText={setText}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          containerStyle={style.nickInputContainer}
+          inputStyle={style.nickInput}
+          value={nickname}
+          onChangeText={setNickname}
+          maxLength={12}
         />
       </View>
 
@@ -138,7 +135,7 @@ const Host = () => {
           onValueChange={(value) => {
             setSliderValue(value);
           }}
-          minimumValue={5}
+          minimumValue={6}
           maximumValue={20}
           step={1}
           minimumTrackTintColor={colors.black}
@@ -149,14 +146,15 @@ const Host = () => {
 
       <View style={style.ratioInfoContainer}>
         <CustomText style={style.label}>Citizens: </CustomText>
-        <CustomText style={[style.label, style.citizensNumber]}>{citizenCount(sliderValue)}</CustomText>
-
+        <CustomText style={[style.label, style.citizensNumber]}>
+          {sliderValue - getNumberOfMafia(sliderValue)}
+        </CustomText>
         <CustomText style={style.label}>Mafia: </CustomText>
-        <CustomText style={[style.label, style.mafiaNumber]}>{mafiaCount(sliderValue)}</CustomText>
+        <CustomText style={[style.label, style.mafiaNumber]}>{getNumberOfMafia(sliderValue)}</CustomText>
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={text === ''} onPress={() => {}}>
+        <CustomButton disabled={nickname === ''} onPress={() => {}}>
           Create Lobby
         </CustomButton>
         <CustomButton
