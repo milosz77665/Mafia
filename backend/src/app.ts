@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
-import mongoose from "mongoose";
+import express from 'express';
+import mongoose from 'mongoose';
 
-require("dotenv").config();
+require('dotenv').config();
 const mongodbUri = process.env.MONGODB_URI;
+const port = process.env.PORT;
 
 const app = express();
-const port = 3000;
 
 mongoose
   .connect(mongodbUri)
