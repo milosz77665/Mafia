@@ -4,6 +4,7 @@ import CustomInput from '@/components/CustomInput';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useState } from 'react';
+import { useNicknameHandler } from '@/hooks/useNicknameHandler';
 
 const style = StyleSheet.create({
   joinContainer: {
@@ -25,8 +26,9 @@ const style = StyleSheet.create({
   nickInputContainer: {
     marginTop: 10,
     height: 40,
-    minWidth: 120
+    minWidth: 120,
   },
+
   nickInput: {
     textAlign: 'center',
     height: 35,
@@ -34,6 +36,7 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
     width: 160,
   },
+
   titleText: {
     fontSize: 50,
   },
@@ -75,9 +78,8 @@ const style = StyleSheet.create({
 });
 
 const Join = () => {
-  const [nickname, setNickname] = useState<string>('SillyGoose17');
+  const { nickname, handleNicknameChange } = useNicknameHandler();
   const [gameId, setGameId] = useState<string>('');
-
 
   return (
     <View style={style.joinContainer}>
@@ -90,7 +92,7 @@ const Join = () => {
           containerStyle={style.nickInputContainer}
           inputStyle={style.nickInput}
           value={nickname}
-          onChangeText={setNickname}
+          onChangeText={handleNicknameChange}
           maxLength={12}
         />
       </View>
@@ -111,8 +113,8 @@ const Join = () => {
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={gameId === ''} onPress={() => {}}>
-          Continue
+        <CustomButton disabled={gameId === '' || nickname === ''} onPress={() => {}}>
+          Join
         </CustomButton>
 
         <CustomButton
