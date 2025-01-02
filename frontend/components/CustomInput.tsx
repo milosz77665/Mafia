@@ -10,11 +10,12 @@ const styles = StyleSheet.create({
     borderRadius: 1,
     backgroundColor: colors.lightGrey,
     borderColor: colors.grey,
-    borderWidth: 1
-  
+    borderWidth: 1,
   },
+
   input: {
     fontSize: 16,
+    padding: 0,
     color: colors.black,
     ...(Platform.OS === 'web' && { outlineStyle: 'none' }),
   },
@@ -41,7 +42,7 @@ const CustomInput: FC<CustomInputProps> = ({
   onFocus,
   onBlur,
   maxLength,
-  keyboardType
+  keyboardType,
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
