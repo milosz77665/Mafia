@@ -4,4 +4,6 @@ export const colors = {
   grey: '#585355',
   lightGrey: '#eeeeee',
   disabledGrey: '#787174',
+  errorWhite: '#fff',
+  errorRed: '#E54B4B',
 };
