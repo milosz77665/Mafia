@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ErrorData {
+  id: string;
   title: string;
   message: string;
 }
