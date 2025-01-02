@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const useUserDataManager = () => {
   const dispatch = useDispatch();
-  const didNicknameChanged = useSelector((state: RootState) => state.user.didNicknameChanged);
+  const isNicknameChanged = useSelector((state: RootState) => state.user.isNicknameChanged);
 
   const manageUserData = async (nickname: string) => {
     const id = await getFromStorage('id');
@@ -17,7 +17,7 @@ export const useUserDataManager = () => {
         dispatch(userActions.setId(data.id));
         await saveInStorage('id', data.id);
       }
-    } else if (didNicknameChanged) {
+    } else if (isNicknameChanged) {
       await updateUser(id, nickname);
     }
   };
