@@ -1,23 +1,16 @@
-import { colors } from '@/constants/colors';
 import store from '@/redux/store';
-import { Slot } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import AutoplayMusic from '@/components/AutoplayMusic';
+import { ReduceMotion, ReducedMotionConfig } from 'react-native-reanimated';
+import 'react-native-gesture-handler';
+import Errors from '@/components/Errors';
+import MainContainer from '@/components/MainContainer';
+import { Slot } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
-
-const style = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-    backgroundColor: colors.white,
-  },
-});
 
 const RootLayout = () => {
   const [loaded, error] = useFonts({
@@ -37,10 +30,12 @@ const RootLayout = () => {
 
   return (
     <Provider store={store}>
+      <ReducedMotionConfig mode={ReduceMotion.Never} />
       <AutoplayMusic />
-      <View style={style.mainContainer}>
+      <MainContainer>
+        <Errors />
         <Slot />
-      </View>
+      </MainContainer>
     </Provider>
   );
 };
