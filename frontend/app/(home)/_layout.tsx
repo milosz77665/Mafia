@@ -21,15 +21,20 @@ const HomeLayout = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const loadNickname = async () => {
+    const loadUserData = async () => {
       const nickname = await getFromStorage('nickname');
+      const id = await getFromStorage('id');
 
       if (nickname) {
         dispatch(userActions.setNickname(nickname));
       }
+
+      if (id) {
+        dispatch(userActions.setId(id));
+      }
     };
 
-    loadNickname();
+    loadUserData();
   }, [dispatch]);
 
   return (

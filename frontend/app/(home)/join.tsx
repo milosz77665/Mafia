@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useState } from 'react';
 import { useNicknameHandler } from '@/hooks/useNicknameHandler';
+import { useUserDataManager } from '@/hooks/useUserDataManager';
 
 const style = StyleSheet.create({
   joinContainer: {
@@ -79,7 +80,12 @@ const style = StyleSheet.create({
 
 const Join = () => {
   const { nickname, handleNicknameChange } = useNicknameHandler();
+  const { manageUserData } = useUserDataManager();
   const [gameId, setGameId] = useState<string>('');
+
+  const handleJoin = async () => {
+    await manageUserData(nickname);
+  };
 
   return (
     <View style={style.joinContainer}>
@@ -113,7 +119,7 @@ const Join = () => {
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={gameId === '' || nickname === ''} onPress={() => {}}>
+        <CustomButton disabled={gameId === '' || nickname === ''} onPress={handleJoin}>
           Join
         </CustomButton>
 
