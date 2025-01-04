@@ -6,6 +6,8 @@ import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import CustomSlider from '@/components/CustomSlider';
 import { colors } from '@/constants/colors';
+import { useNicknameHandler } from '@/hooks/useNicknameHandler';
+import { useUserDataManager } from '@/hooks/useUserDataManager';
 
 const style = StyleSheet.create({
   hostContainer: {
@@ -102,10 +104,16 @@ const style = StyleSheet.create({
 });
 
 const Host = () => {
-  const [nickname, setNickname] = useState<string>('BabyBear67');
+  const { nickname, handleNicknameChange } = useNicknameHandler();
+  const { manageUserData } = useUserDataManager();
   const [sliderValue, setSliderValue] = useState<number>(10);
+
   const getNumberOfMafia = (numberOfPlayers: number): number => {
     return Math.round(Math.sqrt(numberOfPlayers) / 2);
+  };
+
+  const handleCreateLobby = async () => {
+    await manageUserData(nickname);
   };
 
   return (
@@ -120,7 +128,7 @@ const Host = () => {
           containerStyle={style.nickInputContainer}
           inputStyle={style.nickInput}
           value={nickname}
-          onChangeText={setNickname}
+          onChangeText={handleNicknameChange}
           maxLength={12}
         />
       </View>
@@ -154,7 +162,7 @@ const Host = () => {
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={nickname === ''} onPress={() => {}}>
+        <CustomButton disabled={nickname === ''} onPress={handleCreateLobby}>
           Create Lobby
         </CustomButton>
         <CustomButton

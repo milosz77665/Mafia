@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import { RootState } from '@/redux/store';
 
 const AutoplayMusic: FC = () => {
   const audioPath = '../assets/audio/super_secret_spy.mp3';
