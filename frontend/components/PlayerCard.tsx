@@ -4,7 +4,7 @@ import { Image, Text, StyleSheet, View, StyleProp, ViewStyle, TextStyle } from '
 import { colors } from '@/constants/colors';
 
 const style = StyleSheet.create({
-  mainContainer: {
+  playerCard: {
     width: '100%',
     display: 'flex',
     justifyContent: 'flex-start',
@@ -12,18 +12,19 @@ const style = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     paddingBottom: 5,
-    borderBottomWidth: 1, 
-    borderBottomColor: colors.disabledGrey,      
+    borderBottomWidth: 1,
+    borderBottomColor: colors.disabledGrey,
   },
 
   avatarContainer: {
-
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   avatar: {
     width: 40,
     height: 40,
-    borderRadius: 25,
+    borderRadius: 20,
   },
 
   playerInfoContainer: {
@@ -32,24 +33,25 @@ const style = StyleSheet.create({
   },
 
   nickNameText: {
-    
+    fontSize: 14,
+    color: colors.black,
   },
-  
 });
 
 interface PlayerCardProps {
   nickName: string;
   avatarUrl?: string;
-//   playerCardStyle?: StyleProp<ViewStyle>;
+  playerCardStyle?: StyleProp<ViewStyle>;
+  nickNameTextStyle?: StyleProp<TextStyle>;
 }
 
-const PlayerCard: FC<PlayerCardProps> = ({ nickName, avatarUrl }) => {
+const PlayerCard: FC<PlayerCardProps> = ({ nickName, avatarUrl, playerCardStyle, nickNameTextStyle }) => {
   return (
-    <View style={style.mainContainer}>
+    <View style={[style.playerCard, playerCardStyle]}>
       <View style={style.avatarContainer}>{<Image source={{ uri: avatarUrl }} style={style.avatar} />}</View>
 
       <View style={style.playerInfoContainer}>
-        <Text style={style.nickNameText}>{nickName}</Text>
+        <Text style={[style.nickNameText, nickNameTextStyle]}>{nickName}</Text>
       </View>
     </View>
   );

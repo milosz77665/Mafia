@@ -154,7 +154,7 @@ const Host = () => {
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={nickname === ''} onPress={() => {}}>
+        <CustomButton disabled={nickname === ''} onPress={() => {router.replace('/lobby');}}>
           Create Lobby
         </CustomButton>
         <CustomButton

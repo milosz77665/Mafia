@@ -25,8 +25,9 @@ const style = StyleSheet.create({
   nickInputContainer: {
     marginTop: 10,
     height: 40,
-    minWidth: 120
+    minWidth: 120,
   },
+
   nickInput: {
     textAlign: 'center',
     height: 35,
@@ -34,6 +35,7 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
     width: 160,
   },
+
   titleText: {
     fontSize: 50,
   },
@@ -65,7 +67,7 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 210,
+    marginTop: 150,
     width: 143,
   },
 
@@ -76,8 +78,7 @@ const style = StyleSheet.create({
 
 const Join = () => {
   const [nickname, setNickname] = useState<string>('SillyGoose17');
-  const [gameId, setGameId] = useState<string>('');
-
+  const [gameId, setGameId] = useState<string>('1');
 
   return (
     <View style={style.joinContainer}>
@@ -111,7 +112,12 @@ const Join = () => {
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton disabled={gameId === ''} onPress={() => {}}>
+        <CustomButton
+          disabled={gameId === ''}
+          onPress={() => {
+            router.replace('/lobby');
+          }}
+        >
           Continue
         </CustomButton>
 
