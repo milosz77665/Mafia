@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import mongoose from 'mongoose';
 import userRoutes from './routes/user.route';
+import { SocketServer } from './sockets/socketServer';
 import cors from 'cors';
 
 require('dotenv').config();
@@ -25,7 +26,8 @@ app.use('/api/user', userRoutes);
 mongoose
   .connect(mongodbUri)
   .then(() => {
-    app.listen(port);
+    const server = app.listen(port);
+    SocketServer.getInstance(server);
   })
   .catch((e: Error) => {
     console.error(e);
