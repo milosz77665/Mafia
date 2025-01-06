@@ -6,5 +6,7 @@ export interface IUserDocument extends Document {
   createdAt: Date;
   nickname: string;
   avatarUrl: string;
+  isReady: boolean;
+  isHost: boolean;
   role: 'mafia' | 'citizen' | 'none';
 }
