@@ -5,7 +5,9 @@ import { router } from 'expo-router';
 import { StyleSheet, View, FlatList } from 'react-native';
 import { useState } from 'react';
 import { colors } from '@/constants/colors';
-
+import CheckIcon from '@/assets/icons/CheckIcon';
+import CrossIcon from '@/assets/icons/CrossIcon';
+import HostIcon from '@/assets/icons/HostIcon';
 const style = StyleSheet.create({
   lobbyContainer: {
     display: 'flex',
@@ -54,8 +56,6 @@ const style = StyleSheet.create({
     borderBottomWidth: 3,
   },
 
-  highlightedPlayerCard: {},
-
   buttonsContainer: {
     marginTop: 0,
     width: 160,
@@ -72,15 +72,23 @@ const style = StyleSheet.create({
 
 const Lobby = () => {
   const [players, setPlayers] = useState([
-    { id: 'myId1', nickname: 'myName1', avatarUrl: 'https://dummyimage.com/40x40/8B0000/fff.png&text=Me' },
-    { id: 'testId2', nickname: 'testName2', avatarUrl: 'https://dummyimage.com/40x40/0047AB/fff.png&text=Player2' },
-    { id: 'testId3', nickname: 'testName3', avatarUrl: 'https://dummyimage.com/40x40/006400/fff.png&text=Player3' },
-    { id: 'testId4', nickname: 'testName4', avatarUrl: 'https://dummyimage.com/40x40/0a14a3/fceffc.png&text=Player4' },
-    { id: 'testId5', nickname: 'testName5', avatarUrl: 'https://dummyimage.com/40x40/ff4b33/fff.png&text=Player5' },
-    { id: 'testId6', nickname: 'testName6', avatarUrl: 'https://dummyimage.com/40x40/f24bf2/fff.png&text=Player6' },
-    { id: 'testId7', nickname: 'testName7', avatarUrl: 'https://dummyimage.com/40x40/800080/fff.png&text=Player7' },
-    { id: 'testId8', nickname: 'testName8', avatarUrl: 'https://dummyimage.com/40x40/c76e00/fff.png&text=Player8' },
+    { id: 'myId1', nickname: 'myName1', avatarUrl: 'https://dummyimage.com/40x40/8B0000/fff.png&text=Me', isReady: true , isHost: true},
+    { id: 'testId2', nickname: 'testName2', avatarUrl: 'https://dummyimage.com/40x40/0047AB/fff.png&text=Player2', isReady: true, isHost: false},
+    { id: 'testId3', nickname: 'testName3', avatarUrl: 'https://dummyimage.com/40x40/006400/fff.png&text=Player3', isReady: true, isHost: false},
+    { id: 'testId4', nickname: 'testName4', avatarUrl: 'https://dummyimage.com/40x40/0a14a3/fceffc.png&text=Player4', isReady: true, isHost: false },
+    { id: 'testId5', nickname: 'testName5', avatarUrl: 'https://dummyimage.com/40x40/ff4b33/fff.png&text=Player5', isReady: true, isHost: false},
+    { id: 'testId6', nickname: 'testName6', avatarUrl: 'https://dummyimage.com/40x40/f24bf2/fff.png&text=Player6', isReady: false, isHost: false },
+    { id: 'testId7', nickname: 'testName7', avatarUrl: 'https://dummyimage.com/40x40/800080/fff.png&text=Player7', isReady: true, isHost: false },
+    { id: 'testId8', nickname: 'testName8', avatarUrl: 'https://dummyimage.com/40x40/c76e00/fff.png&text=Player8', isReady: false, isHost: false },
   ]);
+
+  const toggleReady = (playerId: string) => {
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player) =>
+        player.id === playerId ? { ...player, isReady: !player.isReady } : player
+      )
+    );
+  };
 
   const playerCount = players.length;
 
@@ -97,11 +105,18 @@ const Lobby = () => {
       <View style={style.mainPlayerContainer}>
         {currentUser && (
           <FlatList
-            data={players.filter((player) => player.id == 'myId1')}
+            data={players.filter((player) => player.id === 'myId1')}
             keyExtractor={(item) => item.id}
             contentContainerStyle={style.playerList}
             renderItem={({ item }) => (
-              <PlayerCard avatarUrl={item.avatarUrl} nickName={item.nickname} playerCardStyle={style.playerCard} />
+              <PlayerCard
+                avatarUrl={item.avatarUrl}
+                icon={
+                  item.isHost ? (<HostIcon />) : item.isReady ? (<CheckIcon />) : (<CrossIcon />)
+                }
+                nickName={item.nickname}
+                playerCardStyle={style.playerCard}
+              />
             )}
           />
         )}
@@ -111,19 +126,38 @@ const Lobby = () => {
           data={players.filter((player) => player.id !== 'myId1')}
           keyExtractor={(item) => item.id}
           contentContainerStyle={style.playerList}
-          renderItem={({ item }) => <PlayerCard avatarUrl={item.avatarUrl} nickName={item.nickname} />}
+          renderItem={({ item }) => (
+            <PlayerCard
+              avatarUrl={item.avatarUrl}
+              icon={
+                item.isHost ? (<HostIcon />) : item.isReady ? (<CheckIcon />) : (<CrossIcon />)
+              }
+              nickName={item.nickname}
+            />
+          )}
         />
       </View>
 
       <View style={style.buttonsContainer}>
-        <CustomButton
-          buttonStyle={style.startButton}
-          onPress={() => {
-            console.log('Start Game');
-          }}
-        >
-          Start Game
-        </CustomButton>
+        {currentUser?.isHost ? (
+          <CustomButton
+            buttonStyle={style.startButton}
+            onPress={() => {
+              console.log('Start Game');
+            }}
+          >
+            Start Game
+          </CustomButton>
+        ) : (
+          <CustomButton
+            buttonStyle={style.startButton}
+            onPress={() => {
+              toggleReady(currentUser?.id || '');
+            }}
+          >
+            {currentUser?.isReady ? 'Not Ready' : 'Ready'}
+          </CustomButton>
+        )}
 
         <CustomButton
           buttonStyle={style.backButton}
