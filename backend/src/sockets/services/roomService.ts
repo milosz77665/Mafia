@@ -335,6 +335,7 @@ export const roomService = (socket: Socket, io: Server) => {
         user.role = 'none';
         user.socketId = '';
         await user.save();
+        socket.disconnect(true);
       }, 15000);
       disconnectTimers.set(user._id.toString(), timer);
       console.log(`User ${user._id.toString()} disconnected`);
