@@ -136,8 +136,10 @@ export const roomService = (socket: Socket, io: Server) => {
       if (!roomExists(room, callback)) return;
 
       user.socketId = '';
+      user.isReady = false;
 
       if (room.players.length === 1) {
+        user.isHost = false;
         deleteRoom(user, roomId, callback);
         return;
       }
@@ -155,6 +157,7 @@ export const roomService = (socket: Socket, io: Server) => {
           return;
         }
         newHost.isHost = true;
+        newHost.isReady = false;
         room.hostId = newHost._id;
 
         await newHost.save();
@@ -190,13 +193,39 @@ export const roomService = (socket: Socket, io: Server) => {
 
       await user.save();
 
-      socket.to(roomId).emit('ready', {
+      socket.to(roomId).emit('playerReady', {
         message: `Player ${id} is ready`,
         playerId: id,
       });
 
       console.log(`Player ${id} is ready`);
       callback({ success: true, message: `You are ready` });
+    } catch (error) {
+      console.log(error);
+      callback({ success: false, message: 'Error occured' });
+    }
+  });
+
+  socket.on('notReady', async (data: roomRequest, callback: (response: roomResponse) => void) => {
+    try {
+      const { id, roomId } = data;
+
+      if (!validateObjectId(id, callback)) return;
+
+      const user = await User.findById(id);
+      if (!userExists(user, callback)) return;
+
+      user.isReady = false;
+
+      await user.save();
+
+      socket.to(roomId).emit('playerReady', {
+        message: `Player ${id} is not ready`,
+        playerId: id,
+      });
+
+      console.log(`Player ${id} is not ready`);
+      callback({ success: true, message: `You are not ready` });
     } catch (error) {
       console.log(error);
       callback({ success: false, message: 'Error occured' });
@@ -226,7 +255,7 @@ export const roomService = (socket: Socket, io: Server) => {
         }
       }
 
-      io.to(roomId).emit('role', {
+      io.to(roomId).emit('rolesAssigned', {
         message: `Your role`,
         players: room.players,
       });
