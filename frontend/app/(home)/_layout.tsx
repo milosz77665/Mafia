@@ -1,6 +1,10 @@
 import { Slot } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import MusicOnOffButton from '@/components/MusicOnOffButton';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { userActions } from '@/redux/reducers/userReducer';
+import { getFromStorage } from '@/storage/storageHandler';
 
 const style = StyleSheet.create({
   settingsContainer: {
@@ -14,6 +18,25 @@ const style = StyleSheet.create({
 });
 
 const HomeLayout = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      const nickname = await getFromStorage('nickname');
+      const id = await getFromStorage('id');
+
+      if (nickname) {
+        dispatch(userActions.setNickname(nickname));
+      }
+
+      if (id) {
+        dispatch(userActions.setId(id));
+      }
+    };
+
+    loadUserData();
+  }, [dispatch]);
+
   return (
     <>
       <View style={style.settingsContainer}>
