@@ -1,7 +1,7 @@
-import { Document, ObjectId } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export interface IUserDocument extends Document {
-  _id: ObjectId;
+  _id: Types.ObjectId;
   socketId: string;
   createdAt: Date;
   nickname: string;

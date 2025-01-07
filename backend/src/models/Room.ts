@@ -1,7 +1,5 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, SchemaTypes } from 'mongoose';
 import { IRoomDocument, IRoomModel } from '../interfaces/IRoom';
-import { ObjectId } from 'mongodb';
-
 const RoomSchema = new Schema<IRoomDocument, IRoomModel>({
   roomId: {
     type: String,
@@ -9,8 +7,8 @@ const RoomSchema = new Schema<IRoomDocument, IRoomModel>({
     unique: true,
     immutable: true,
   },
-  hostId: { type: ObjectId, ref: 'User', required: true, unique: true },
-  players: [{ type: ObjectId, ref: 'User' }],
+  hostId: { type: SchemaTypes.ObjectId, ref: 'User', required: true, unique: true },
+  players: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
   maxPlayers: { type: Number, min: 6 },
   numberOfMafia: Number,
   createdAt: { type: Date, default: Date.now },

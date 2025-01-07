@@ -4,6 +4,7 @@ import { User } from '../../models/User';
 import { ObjectId } from 'mongodb';
 import { IRoomDocument } from '../../interfaces/IRoom';
 import { IUserDocument } from '../../interfaces/IUser';
+import { Types } from 'mongoose';
 
 interface createRoomRequest {
   id: string;
@@ -52,6 +53,10 @@ const deleteRoom = async (user: IUserDocument, roomId: string, callback: (respon
   callback({ success: true, message: `Room ${roomId} was deleted` });
 };
 
+const isIUserDocument = (player: IUserDocument | Types.ObjectId): player is IUserDocument => {
+  return (player as IUserDocument).isReady !== undefined;
+};
+
 export const roomService = (socket: Socket, io: Server) => {
   socket.on('createRoom', async (data: createRoomRequest, callback: (response: roomResponse) => void) => {
     try {
@@ -77,7 +82,7 @@ export const roomService = (socket: Socket, io: Server) => {
 
       await Promise.all([user.save(), room.save(), room.populate('players')]);
 
-      console.log(`Room ${roomId} created by ${socket.id}`);
+      console.log(`Room ${roomId} created by ${id}`);
       callback({ success: true, message: `Room ${roomId} created successfully`, lobby: room });
     } catch (error) {
       console.log(error);
@@ -100,7 +105,7 @@ export const roomService = (socket: Socket, io: Server) => {
       if (!roomExists(room, callback)) return;
 
       if (room.players.length >= room.maxPlayers) {
-        callback({ success: false, message: 'Room is full' });
+        callback({ success: false, message: "You can't join. Room is full" });
         return;
       }
 
@@ -115,8 +120,8 @@ export const roomService = (socket: Socket, io: Server) => {
         lobby: room,
       });
 
-      console.log(`User ${socket.id} joined room ${roomId}`);
-      callback({ success: true, lobby: room });
+      console.log(`User ${id} joined the room ${roomId}`);
+      callback({ success: true, message: `You joined to the room ${roomId}`, lobby: room });
     } catch (error) {
       console.log(error);
       callback({ success: false, message: 'Error occured while joining a room' });
@@ -172,7 +177,7 @@ export const roomService = (socket: Socket, io: Server) => {
         lobby: room,
       });
 
-      console.log(`User ${socket.id} left`);
+      console.log(`User ${id} left`);
       callback({ success: true, message: `You left the Room ${roomId}` });
     } catch (error) {
       console.log(error);
@@ -239,24 +244,39 @@ export const roomService = (socket: Socket, io: Server) => {
       const room = await Room.findOne({ roomId });
       if (!roomExists(room, callback)) return;
 
-      if (room.players.length < 6) {
-        callback({ success: false, message: 'There are not enough players to start the game' });
+      // if (room.players.length < 6) {
+      //   callback({ success: false, message: 'There are not enough players to start the game' });
+      //   return;
+      // }
+
+      await room.populate('players');
+
+      if (!room.players.every((player) => isIUserDocument(player) && (player.isReady || player.isHost))) {
+        callback({ success: false, message: 'All players must be ready to start the game' });
         return;
       }
 
       room.numberOfMafia = Math.round(Math.sqrt(room.players.length) / 2);
 
-      await room.populate('players');
-
       for (let i = 0; i < room.numberOfMafia; i++) {
         const player = room.players[Math.floor(Math.random() * room.players.length)];
         if ('role' in player) {
           player.role = 'mafia';
+          await player.save();
         }
       }
 
+      room.players.forEach(async (player) => {
+        if ('role' in player && player.role === 'none') {
+          player.role = 'citizen';
+          await player.save();
+        }
+      });
+
+      await room.save();
+
       io.to(roomId).emit('rolesAssigned', {
-        message: `Your role`,
+        message: `Roles assigned`,
         players: room.players,
       });
 
