@@ -22,6 +22,8 @@ interface roomResponse {
   lobby?: IRoomDocument;
 }
 
+const disconnectTimers: Map<string, NodeJS.Timeout> = new Map();
+
 const validateObjectId = (id: string, callback: (response: roomResponse) => void) => {
   if (!ObjectId.isValid(id)) {
     callback({ success: false, message: 'Invalid user ID' });
@@ -106,6 +108,11 @@ export const roomService = (socket: Socket, io: Server) => {
 
       if (room.players.length >= room.maxPlayers) {
         callback({ success: false, message: "You can't join. Room is full" });
+        return;
+      }
+
+      if (room.isGameStarted) {
+        callback({ success: false, message: "You can't join. Game was started" });
         return;
       }
 
@@ -273,6 +280,10 @@ export const roomService = (socket: Socket, io: Server) => {
         }
       });
 
+      if (!room.isGameStarted) {
+        room.isGameStarted = true;
+      }
+
       await room.save();
 
       io.to(roomId).emit('rolesAssigned', {
@@ -285,6 +296,69 @@ export const roomService = (socket: Socket, io: Server) => {
     } catch (error) {
       console.log(error);
       callback({ success: false, message: 'Error occured while starting the game' });
+    }
+  });
+
+  socket.on('disconnect', async () => {
+    try {
+      const user = await User.findOne({ socketId: socket.id });
+      if (!user) return;
+
+      const timer = setTimeout(async () => {
+        const room = await Room.findOne({ players: user._id });
+        if (room) {
+          if (room.players.length === 1) {
+            await Room.deleteOne({ _id: room._id });
+          } else {
+            room.players = room.players.filter((playerId) => {
+              return playerId.toString() !== user._id.toString();
+            });
+
+            if (user.isHost) {
+              const newHost = await User.findOne({ _id: { $in: room.players } });
+              if (!newHost) {
+                await Room.deleteOne({ _id: room._id });
+                return;
+              }
+              newHost.isHost = true;
+              newHost.isReady = false;
+              room.hostId = newHost._id;
+
+              await newHost.save();
+            }
+            await room.save();
+          }
+          socket.leave(room.roomId);
+        }
+        user.isHost = false;
+        user.isReady = false;
+        user.role = 'none';
+        user.socketId = '';
+        await user.save();
+      }, 15000);
+      disconnectTimers.set(user._id.toString(), timer);
+      console.log(`User ${user._id.toString()} disconnected`);
+    } catch (error) {
+      console.error('Error during disconnection: ', error);
+    }
+  });
+
+  socket.on('reconnect', async (data: { id: string }) => {
+    try {
+      const { id } = data;
+
+      const user = await User.findById(id);
+      if (!user) return;
+
+      if (disconnectTimers.has(user._id.toString())) {
+        clearTimeout(disconnectTimers.get(user._id.toString())!);
+        disconnectTimers.delete(user._id.toString());
+        user.socketId = socket.id;
+        await user.save();
+      }
+      console.log(`User ${id} reconnected`);
+    } catch (error) {
+      console.error('Error during reconnection: ', error);
     }
   });
 };

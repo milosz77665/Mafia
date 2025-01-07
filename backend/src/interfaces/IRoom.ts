@@ -7,6 +7,7 @@ export interface IRoomDocument extends Document {
   players: (Types.ObjectId | IUserDocument)[];
   maxPlayers: number;
   numberOfMafia: number;
+  isGameStarted: boolean;
   createdAt: Date;
   logs: string[];
 }

@@ -8,7 +8,9 @@ export class SocketServer {
 
   private constructor(server: HTTPServer) {
     this.io = new Server(server, {
-      connectionStateRecovery: {},
+      connectionStateRecovery: {
+        maxDisconnectionDuration: 15000,
+      },
       cors: {
         origin: '*',
         methods: ['GET', 'POST'],

@@ -11,6 +11,7 @@ const RoomSchema = new Schema<IRoomDocument, IRoomModel>({
   players: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
   maxPlayers: { type: Number, min: 6 },
   numberOfMafia: Number,
+  isGameStarted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   logs: { type: [String], default: [] },
 });
