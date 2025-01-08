@@ -1,9 +1,9 @@
 import SoundOffIcon from '@/assets/icons/SoundOffIcon';
 import SoundOnIcon from '@/assets/icons/SoundOnIcon';
-import { RootState } from '@/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { soundActions } from '../reducers/soundReducer';
+import { soundActions } from '../redux/reducers/soundReducer';
 import { Pressable } from 'react-native';
+import { RootState } from '@/redux/store';
 
 const MusicOnOffButton = () => {
   const dispatch = useDispatch();
