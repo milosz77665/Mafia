@@ -8,6 +8,7 @@ import { colors } from '@/constants/colors';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import CrossIcon from '@/assets/icons/CrossIcon';
 import HostIcon from '@/assets/icons/HostIcon';
+
 const style = StyleSheet.create({
   lobbyContainer: {
     display: 'flex',
@@ -37,13 +38,13 @@ const style = StyleSheet.create({
 
   mainPlayerContainer: {
     marginTop: 10,
+    paddingHorizontal: 19,
     width: '100%',
   },
 
   playerListContainer: {
     width: '100%',
     flex: 1,
-    maxHeight: 290,
   },
 
   playerList: {
@@ -57,18 +58,20 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 0,
     width: 160,
+    justifyContent: 'flex-end',
+    flex: 1, 
   },
 
   startButton: {
-    marginTop: 20,
+    marginBottom: 20,
   },
 
   backButton: {
-    marginTop: 30,
+    marginBottom: 30,
   },
 });
+
 
 const Lobby = () => {
   const [players, setPlayers] = useState([
@@ -84,43 +87,28 @@ const Lobby = () => {
 
   const toggleReady = (playerId: string) => {
     setPlayers((prevPlayers) =>
-      prevPlayers.map((player) =>
-        player.id === playerId ? { ...player, isReady: !player.isReady } : player
-      )
+      prevPlayers.map((player) => (player.id === playerId ? { ...player, isReady: !player.isReady } : player))
     );
   };
-
-  const playerCount = players.length;
 
   const currentUser = players.find((player) => player.id === 'myId1');
 
   return (
     <View style={style.lobbyContainer}>
-      <CustomText style={style.titleText}>Lobby {playerCount}/8</CustomText>
-
+      <CustomText style={style.titleText}>Lobby {players.length}/8</CustomText>
       <CustomText style={style.lobbyCodeLabel}>Your lobby code:</CustomText>
-
       <CustomText style={style.lobbyCodeText}>69420</CustomText>
-
       <View style={style.mainPlayerContainer}>
         {currentUser && (
-          <FlatList
-            data={players.filter((player) => player.id === 'myId1')}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={style.playerList}
-            renderItem={({ item }) => (
-              <PlayerCard
-                avatarUrl={item.avatarUrl}
-                icon={
-                  item.isHost ? (<HostIcon />) : item.isReady ? (<CheckIcon />) : (<CrossIcon />)
-                }
-                nickName={item.nickname}
-                playerCardStyle={style.playerCard}
-              />
-            )}
+          <PlayerCard
+            avatarUrl={currentUser.avatarUrl}
+            icon={currentUser.isHost ? <HostIcon /> : currentUser.isReady ? <CheckIcon /> : <CrossIcon />}
+            playerNickname={currentUser.nickname}
+            playerCardStyle={style.playerCard}
           />
         )}
       </View>
+
       <View style={style.playerListContainer}>
         <FlatList
           data={players.filter((player) => player.id !== 'myId1')}
@@ -129,10 +117,8 @@ const Lobby = () => {
           renderItem={({ item }) => (
             <PlayerCard
               avatarUrl={item.avatarUrl}
-              icon={
-                item.isHost ? (<HostIcon />) : item.isReady ? (<CheckIcon />) : (<CrossIcon />)
-              }
-              nickName={item.nickname}
+              icon={item.isHost ? <HostIcon /> : item.isReady ? <CheckIcon /> : <CrossIcon />}
+              playerNickname={item.nickname}
             />
           )}
         />
@@ -158,7 +144,6 @@ const Lobby = () => {
             {currentUser?.isReady ? 'Not Ready' : 'Ready'}
           </CustomButton>
         )}
-
         <CustomButton
           buttonStyle={style.backButton}
           onPress={() => {
@@ -168,6 +153,7 @@ const Lobby = () => {
           Leave
         </CustomButton>
       </View>
+
     </View>
   );
 };

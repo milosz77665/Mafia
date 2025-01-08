@@ -34,7 +34,7 @@ const style = StyleSheet.create({
     marginLeft: 10,
   },
 
-  nickNameText: {
+  nicknameText: {
     fontSize: 14,
     color: colors.black,
   },
@@ -52,14 +52,14 @@ const style = StyleSheet.create({
 });
 
 interface PlayerCardProps {
-  nickName: string;
+  playerNickname: string;
   avatarUrl?: string;
   icon?: React.ReactNode;
   playerCardStyle?: StyleProp<ViewStyle>;
-  nickNameTextStyle?: StyleProp<TextStyle>;
+  nicknameTextStyle?: StyleProp<TextStyle>;
 }
 
-const PlayerCard: FC<PlayerCardProps> = ({ nickName, avatarUrl, icon, playerCardStyle, nickNameTextStyle}) => {
+const PlayerCard: FC<PlayerCardProps> = ({playerNickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle}) => {
   return (
     <View style={[style.playerCard, playerCardStyle]}>
       <View style={style.avatarContainer}>
@@ -67,7 +67,7 @@ const PlayerCard: FC<PlayerCardProps> = ({ nickName, avatarUrl, icon, playerCard
       </View>
 
       <View style={style.playerInfoContainer}>
-        <Text style={[style.nickNameText, nickNameTextStyle]}>{nickName}</Text>
+        <Text style={[style.nicknameText, nicknameTextStyle]}>{playerNickname}</Text>
       </View>
 
       {icon && (
