@@ -37,9 +37,9 @@ const style = StyleSheet.create({
   },
 
   mainPlayerContainer: {
-    marginTop: 10,
     paddingHorizontal: 19,
     width: '100%',
+    height: 60,
   },
 
   playerListContainer: {
