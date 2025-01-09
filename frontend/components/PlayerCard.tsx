@@ -52,14 +52,14 @@ const style = StyleSheet.create({
 });
 
 interface PlayerCardProps {
-  playerNickname: string;
+  nickname: string;
   avatarUrl?: string;
   icon?: React.ReactNode;
   playerCardStyle?: StyleProp<ViewStyle>;
   nicknameTextStyle?: StyleProp<TextStyle>;
 }
 
-const PlayerCard: FC<PlayerCardProps> = ({playerNickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle}) => {
+const PlayerCard: FC<PlayerCardProps> = ({nickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle}) => {
   return (
     <View style={[style.playerCard, playerCardStyle]}>
       <View style={style.avatarContainer}>
@@ -67,7 +67,7 @@ const PlayerCard: FC<PlayerCardProps> = ({playerNickname, avatarUrl, icon, playe
       </View>
 
       <View style={style.playerInfoContainer}>
-        <Text style={[style.nicknameText, nicknameTextStyle]}>{playerNickname}</Text>
+        <Text style={[style.nicknameText, nicknameTextStyle]}>{nickname}</Text>
       </View>
 
       {icon && (

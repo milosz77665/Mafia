@@ -103,7 +103,7 @@ const Lobby = () => {
           <PlayerCard
             avatarUrl={currentUser.avatarUrl}
             icon={currentUser.isHost ? <HostIcon /> : currentUser.isReady ? <CheckIcon /> : <CrossIcon />}
-            playerNickname={currentUser.nickname}
+            nickname={currentUser.nickname}
             playerCardStyle={style.playerCard}
           />
         )}
@@ -118,7 +118,7 @@ const Lobby = () => {
             <PlayerCard
               avatarUrl={item.avatarUrl}
               icon={item.isHost ? <HostIcon /> : item.isReady ? <CheckIcon /> : <CrossIcon />}
-              playerNickname={item.nickname}
+              nickname={item.nickname}
             />
           )}
         />
