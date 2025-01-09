@@ -9,11 +9,11 @@ import { colors } from '@/constants/colors';
 import { useNicknameHandler } from '@/hooks/useNicknameHandler';
 import { useUserDataManager } from '@/hooks/useUserDataManager';
 import socketApi from '@/api/socketApi';
-import { createLobby, lobbyResponse } from '@/api/lobbyApi';
+import { createLobby } from '@/api/lobbyApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { errorActions } from '@/redux/reducers/errorReducer';
 import { gameActions } from '@/redux/reducers/gameReducer';
+import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 
 const style = StyleSheet.create({
   hostContainer: {
@@ -110,8 +110,9 @@ const style = StyleSheet.create({
 });
 
 const Host = () => {
-  const id = useSelector((state: RootState) => state.user.id);
   const dispatch = useDispatch();
+  const id = useSelector((state: RootState) => state.user.id);
+  const { handleSocketError } = useSocketErrorHandler();
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
   const [maxPlayers, setMaxPlayers] = useState<number>(10);
@@ -133,14 +134,7 @@ const Host = () => {
 
       router.replace('/lobby');
     } catch (error) {
-      const response = error as lobbyResponse;
-      dispatch(
-        errorActions.showError({
-          id: Date.now().toString(),
-          title: `Error:`,
-          message: response.message || 'Unexpected error occurred',
-        })
-      );
+      handleSocketError(error);
     }
   };
 
