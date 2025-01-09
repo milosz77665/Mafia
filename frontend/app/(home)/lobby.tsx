@@ -129,7 +129,7 @@ const Lobby = () => {
           <CustomButton
             buttonStyle={style.startButton}
             onPress={() => {
-              console.log('Start Game');
+              router.replace('/loader');
             }}
           >
             Start Game
