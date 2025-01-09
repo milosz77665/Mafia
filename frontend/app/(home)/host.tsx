@@ -8,6 +8,12 @@ import CustomSlider from '@/components/CustomSlider';
 import { colors } from '@/constants/colors';
 import { useNicknameHandler } from '@/hooks/useNicknameHandler';
 import { useUserDataManager } from '@/hooks/useUserDataManager';
+import socketApi from '@/api/socketApi';
+import { createLobby, lobbyResponse } from '@/api/lobbyApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { errorActions } from '@/redux/reducers/errorReducer';
+import { gameActions } from '@/redux/reducers/gameReducer';
 
 const style = StyleSheet.create({
   hostContainer: {
@@ -104,17 +110,38 @@ const style = StyleSheet.create({
 });
 
 const Host = () => {
+  const id = useSelector((state: RootState) => state.user.id);
+  const dispatch = useDispatch();
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
-  const [sliderValue, setSliderValue] = useState<number>(10);
+  const [maxPlayers, setMaxPlayers] = useState<number>(10);
 
   const getNumberOfMafia = (numberOfPlayers: number): number => {
     return Math.round(Math.sqrt(numberOfPlayers) / 2);
   };
 
   const handleCreateLobby = async () => {
-    await manageUserData(nickname);
-    router.replace('/lobby');
+    const success = await manageUserData(nickname);
+    if (!success) return;
+    try {
+      socketApi.connect();
+      const data = await createLobby(id, maxPlayers);
+
+      if (data.lobby) {
+        dispatch(gameActions.setLobby(data.lobby));
+      }
+
+      router.replace('/lobby');
+    } catch (error) {
+      const response = error as lobbyResponse;
+      dispatch(
+        errorActions.showError({
+          id: Date.now().toString(),
+          title: `Error:`,
+          message: response.message || 'Unexpected error occurred',
+        })
+      );
+    }
   };
 
   return (
@@ -136,13 +163,13 @@ const Host = () => {
 
       <View style={style.lobbySizeContainer}>
         <CustomText style={style.label}>Set lobby size</CustomText>
-        <CustomText style={style.sliderCurrentNumber}>{sliderValue}</CustomText>
+        <CustomText style={style.sliderCurrentNumber}>{maxPlayers}</CustomText>
         <CustomSlider
           sliderStyle={style.slider}
           sliderContainerStyle={style.sliderContainer}
-          value={sliderValue}
+          value={maxPlayers}
           onValueChange={(value) => {
-            setSliderValue(value);
+            setMaxPlayers(value);
           }}
           minimumValue={6}
           maximumValue={20}
@@ -155,11 +182,9 @@ const Host = () => {
 
       <View style={style.ratioInfoContainer}>
         <CustomText style={style.label}>Citizens: </CustomText>
-        <CustomText style={[style.label, style.citizensNumber]}>
-          {sliderValue - getNumberOfMafia(sliderValue)}
-        </CustomText>
+        <CustomText style={[style.label, style.citizensNumber]}>{maxPlayers - getNumberOfMafia(maxPlayers)}</CustomText>
         <CustomText style={style.label}>Mafia: </CustomText>
-        <CustomText style={[style.label, style.mafiaNumber]}>{getNumberOfMafia(sliderValue)}</CustomText>
+        <CustomText style={[style.label, style.mafiaNumber]}>{getNumberOfMafia(maxPlayers)}</CustomText>
       </View>
 
       <View style={style.buttonsContainer}>
