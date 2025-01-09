@@ -100,7 +100,6 @@ const Join = () => {
 
       if (data.lobby) {
         dispatch(gameActions.setLobby(data.lobby));
-        // dispatch(userActions.setGameId(data.lobby.roomId));
       }
 
       router.replace('/lobby');
