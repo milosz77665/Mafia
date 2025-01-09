@@ -6,21 +6,19 @@ type UserResponse = {
 };
 
 export const createUser = async (nickname: string): Promise<UserResponse | null> => {
-  const response = await api.post<UserResponse>('/api/user/new', { nickname });
-
-  if ('error' in response) {
+  try {
+    const response = await api.post<UserResponse>('/api/user/new', { nickname });
+    return response.data;
+  } catch (error) {
     return null;
   }
-
-  return response.data;
 };
 
 export const updateUser = async (id: string, nickname: string): Promise<UserResponse | null> => {
-  const response = await api.patch<UserResponse>(`/api/user/update/${id}`, { nickname });
-
-  if ('error' in response) {
+  try {
+    const response = await api.patch<UserResponse>(`/api/user/update/${id}`, { nickname });
+    return response.data;
+  } catch (error) {
     return null;
   }
-
-  return response.data;
 };
