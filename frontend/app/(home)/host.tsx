@@ -114,6 +114,7 @@ const Host = () => {
 
   const handleCreateLobby = async () => {
     await manageUserData(nickname);
+    router.replace('/lobby');
   };
 
   return (

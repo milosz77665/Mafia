@@ -69,7 +69,7 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 210,
+    marginTop: 150,
     width: 143,
   },
 
@@ -85,6 +85,7 @@ const Join = () => {
 
   const handleJoin = async () => {
     await manageUserData(nickname);
+    router.replace('/lobby');
   };
 
   return (
