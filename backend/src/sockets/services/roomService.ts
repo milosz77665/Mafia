@@ -124,7 +124,7 @@ export const roomService = (socket: Socket, io: Server) => {
 
       socket.to(roomId).emit('playerJoined', {
         message: `Player ${id} joined the room`,
-        lobby: room,
+        player: user,
       });
 
       console.log(`User ${id} joined the room ${roomId}`);
@@ -181,7 +181,7 @@ export const roomService = (socket: Socket, io: Server) => {
 
       socket.to(roomId).emit('playerLeft', {
         message: `Player ${id} left the room`,
-        lobby: room,
+        players: room.players,
       });
 
       console.log(`User ${id} left`);
