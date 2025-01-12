@@ -6,6 +6,12 @@ import { StyleSheet, View } from 'react-native';
 import { useState } from 'react';
 import { useNicknameHandler } from '@/hooks/useNicknameHandler';
 import { useUserDataManager } from '@/hooks/useUserDataManager';
+import socketApi from '@/api/socketApi';
+import { joinLobby } from '@/api/lobbyApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { gameActions } from '@/redux/reducers/gameReducer';
+import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 
 const style = StyleSheet.create({
   joinContainer: {
@@ -79,13 +85,28 @@ const style = StyleSheet.create({
 });
 
 const Join = () => {
+  const dispatch = useDispatch();
+  const id = useSelector((state: RootState) => state.user.id);
+  const { handleSocketError } = useSocketErrorHandler();
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
   const [gameId, setGameId] = useState<string>('');
 
   const handleJoin = async () => {
-    await manageUserData(nickname);
-    router.replace('/lobby');
+    const success = await manageUserData(nickname);
+    if (!success) return;
+    try {
+      socketApi.connect();
+      const data = await joinLobby(id, gameId);
+
+      if (data.lobby) {
+        dispatch(gameActions.setLobby(data.lobby));
+      }
+
+      router.replace('/lobby');
+    } catch (error) {
+      handleSocketError(error);
+    }
   };
 
   return (

@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface userState {
+interface UserState {
   nickname: string;
   id: string;
   isNicknameChanged: boolean;
 }
 
-const userInitialState: userState = {
+const userInitialState: UserState = {
   nickname: 'SillyGoose17',
   id: '',
   isNicknameChanged: false,
@@ -23,7 +23,7 @@ const userSlice = createSlice({
     setId(state, action: PayloadAction<string>) {
       state.id = action.payload;
     },
-    resetisNicknameChanged(state) {
+    resetIsNicknameChanged(state) {
       state.isNicknameChanged = false;
     },
   },

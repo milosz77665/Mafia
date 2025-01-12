@@ -16,10 +16,20 @@ export const useUserDataManager = () => {
       if (data) {
         dispatch(userActions.setId(data.id));
         await saveInStorage('id', data.id);
+        return true;
+      } else {
+        return false;
       }
     } else if (isNicknameChanged) {
-      await updateUser(id, nickname);
+      const data = await updateUser(id, nickname);
+      if (data) {
+        dispatch(userActions.resetIsNicknameChanged());
+        return true;
+      } else {
+        return false;
+      }
     }
+    return true;
   };
   return { manageUserData };
 };

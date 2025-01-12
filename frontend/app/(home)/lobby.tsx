@@ -3,11 +3,31 @@ import CustomText from '@/components/CustomText';
 import PlayerCard from '@/components/PlayerCard';
 import { router } from 'expo-router';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { colors } from '@/constants/colors';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import CrossIcon from '@/assets/icons/CrossIcon';
 import HostIcon from '@/assets/icons/HostIcon';
+import {
+  leaveLobby,
+  notReady,
+  offPlayerJoined,
+  offPlayerLeft,
+  offPlayerReady,
+  offRolesAssigned,
+  onPlayerJoined,
+  onPlayerLeft,
+  onPlayerReady,
+  onRolesAssigned,
+  ready,
+  startGame,
+} from '@/api/lobbyApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { IUser } from '@/interfaces/IUser';
+import { isUserObject } from '@/utils/typeGuards';
+import { gameActions } from '@/redux/reducers/gameReducer';
+import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 
 const style = StyleSheet.create({
   lobbyContainer: {
@@ -36,7 +56,7 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  mainPlayerContainer: {
+  currentUserContainer: {
     paddingHorizontal: 19,
     width: '100%',
     height: 60,
@@ -60,7 +80,7 @@ const style = StyleSheet.create({
   buttonsContainer: {
     width: 160,
     justifyContent: 'flex-end',
-    flex: 1, 
+    flex: 1,
   },
 
   startButton: {
@@ -72,33 +92,87 @@ const style = StyleSheet.create({
   },
 });
 
-
 const Lobby = () => {
-  const [players, setPlayers] = useState([
-    { id: 'myId1', nickname: 'myName1', avatarUrl: 'https://dummyimage.com/40x40/8B0000/fff.png&text=Me', isReady: true , isHost: true},
-    { id: 'testId2', nickname: 'testName2', avatarUrl: 'https://dummyimage.com/40x40/0047AB/fff.png&text=Player2', isReady: true, isHost: false},
-    { id: 'testId3', nickname: 'testName3', avatarUrl: 'https://dummyimage.com/40x40/006400/fff.png&text=Player3', isReady: true, isHost: false},
-    { id: 'testId4', nickname: 'testName4', avatarUrl: 'https://dummyimage.com/40x40/0a14a3/fceffc.png&text=Player4', isReady: true, isHost: false },
-    { id: 'testId5', nickname: 'testName5', avatarUrl: 'https://dummyimage.com/40x40/ff4b33/fff.png&text=Player5', isReady: true, isHost: false},
-    { id: 'testId6', nickname: 'testName6', avatarUrl: 'https://dummyimage.com/40x40/f24bf2/fff.png&text=Player6', isReady: false, isHost: false },
-    { id: 'testId7', nickname: 'testName7', avatarUrl: 'https://dummyimage.com/40x40/800080/fff.png&text=Player7', isReady: true, isHost: false },
-    { id: 'testId8', nickname: 'testName8', avatarUrl: 'https://dummyimage.com/40x40/c76e00/fff.png&text=Player8', isReady: false, isHost: false },
-  ]);
+  const dispatch = useDispatch();
+  const { handleSocketError } = useSocketErrorHandler();
+  const lobby = useSelector((state: RootState) => state.game.lobby);
+  const id = useSelector((state: RootState) => state.user.id);
+  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
 
-  const toggleReady = (playerId: string) => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player) => (player.id === playerId ? { ...player, isReady: !player.isReady } : player))
-    );
+  const handleStartGame = async () => {
+    try {
+      if (lobby) {
+        const data = startGame(lobby.roomId);
+      }
+    } catch (error) {
+      handleSocketError(error);
+    }
   };
 
-  const currentUser = players.find((player) => player.id === 'myId1');
+  const handleReady = async () => {
+    try {
+      if (lobby && currentUser) {
+        if (currentUser.isReady) {
+          await notReady(id, lobby.roomId);
+        } else {
+          await ready(id, lobby.roomId);
+        }
+        setCurrentUser((prevUser) => (prevUser ? { ...prevUser, isReady: !prevUser.isReady } : prevUser));
+      }
+    } catch (error) {
+      handleSocketError(error);
+    }
+  };
+
+  const handleLeave = async () => {
+    try {
+      if (lobby) {
+        await leaveLobby(id, lobby.roomId);
+        router.replace('/');
+      }
+    } catch (error) {
+      handleSocketError(error);
+    }
+  };
+
+  useEffect(() => {
+    if (lobby && id) {
+      const foundUser = lobby.players.find((player): player is IUser => isUserObject(player) && player._id === id);
+      setCurrentUser(foundUser || null);
+    }
+    onPlayerJoined((data) => {
+      dispatch(gameActions.addPlayer(data.player));
+      console.log(data);
+    });
+    onPlayerLeft((data) => {
+      dispatch(gameActions.updatePlayers(data.players));
+      console.log(data);
+    });
+    onPlayerReady((data) => {
+      dispatch(gameActions.updateIsReady(data.playerId));
+      console.log(data);
+    });
+    onRolesAssigned((data) => {
+      dispatch(gameActions.updatePlayers(data.players));
+      console.log(data);
+    });
+
+    return () => {
+      offPlayerJoined();
+      offPlayerLeft();
+      offPlayerReady();
+      offRolesAssigned();
+    };
+  }, [lobby, id]);
 
   return (
     <View style={style.lobbyContainer}>
-      <CustomText style={style.titleText}>Lobby {players.length}/8</CustomText>
+      <CustomText style={style.titleText}>
+        Lobby {lobby?.players.length}/{lobby?.maxPlayers}
+      </CustomText>
       <CustomText style={style.lobbyCodeLabel}>Your lobby code:</CustomText>
-      <CustomText style={style.lobbyCodeText}>69420</CustomText>
-      <View style={style.mainPlayerContainer}>
+      <CustomText style={style.lobbyCodeText}>{lobby?.roomId}</CustomText>
+      <View style={style.currentUserContainer}>
         {currentUser && (
           <PlayerCard
             avatarUrl={currentUser.avatarUrl}
@@ -110,50 +184,36 @@ const Lobby = () => {
       </View>
 
       <View style={style.playerListContainer}>
-        <FlatList
-          data={players.filter((player) => player.id !== 'myId1')}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={style.playerList}
-          renderItem={({ item }) => (
-            <PlayerCard
-              avatarUrl={item.avatarUrl}
-              icon={item.isHost ? <HostIcon /> : item.isReady ? <CheckIcon /> : <CrossIcon />}
-              nickname={item.nickname}
-            />
-          )}
-        />
+        {lobby && (
+          <FlatList
+            data={lobby.players.filter((player): player is IUser => isUserObject(player) && player._id !== id)}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={style.playerList}
+            renderItem={({ item }) => (
+              <PlayerCard
+                avatarUrl={item.avatarUrl}
+                icon={item.isHost ? <HostIcon /> : item.isReady ? <CheckIcon /> : <CrossIcon />}
+                nickname={item.nickname}
+              />
+            )}
+          />
+        )}
       </View>
 
       <View style={style.buttonsContainer}>
         {currentUser?.isHost ? (
-          <CustomButton
-            buttonStyle={style.startButton}
-            onPress={() => {
-              console.log('Start Game');
-            }}
-          >
+          <CustomButton buttonStyle={style.startButton} onPress={handleStartGame}>
             Start Game
           </CustomButton>
         ) : (
-          <CustomButton
-            buttonStyle={style.startButton}
-            onPress={() => {
-              toggleReady(currentUser?.id || '');
-            }}
-          >
+          <CustomButton buttonStyle={style.startButton} onPress={handleReady}>
             {currentUser?.isReady ? 'Not Ready' : 'Ready'}
           </CustomButton>
         )}
-        <CustomButton
-          buttonStyle={style.backButton}
-          onPress={() => {
-            router.replace('/');
-          }}
-        >
+        <CustomButton buttonStyle={style.backButton} onPress={handleLeave}>
           Leave
         </CustomButton>
       </View>
-
     </View>
   );
 };
