@@ -6,7 +6,7 @@ const validateNickname = (nickname: string, res: Response): boolean => {
   if (!nickname) {
     res.status(400).json({
       error: 'Bad Request',
-      message: 'Nickname is required.',
+      message: 'Nickname is required',
     });
     return false;
   }
@@ -17,7 +17,7 @@ const validateObjectId = (id: string, res: Response): boolean => {
   if (!ObjectId.isValid(id)) {
     res.status(400).json({
       error: 'Bad Request',
-      message: 'Invalid User ID format.',
+      message: 'Invalid User ID format',
     });
     return false;
   }
@@ -43,7 +43,7 @@ export const newUser = async (req: Request<{}, {}, { nickname: string }>, res: R
 
     res.status(201).json({ id: user._id.toString(), nickname });
   } catch (error) {
-    handleServerError(error, 'An error occurred while saving to the database.', res);
+    handleServerError(error, 'An error occurred while saving to the database', res);
   }
 };
 
@@ -59,7 +59,7 @@ export const updateUser = async (req: Request<{ id: string }, {}, { nickname: st
     if (!user) {
       return res.status(404).json({
         error: 'Not Found',
-        message: 'User not found.',
+        message: 'User not found',
       });
     }
 
@@ -68,7 +68,7 @@ export const updateUser = async (req: Request<{ id: string }, {}, { nickname: st
 
     res.status(200).json({ id, nickname });
   } catch (error) {
-    handleServerError(error, 'An error occurred while updating user data.', res);
+    handleServerError(error, 'An error occurred while updating user data', res);
   }
 };
 
@@ -83,12 +83,12 @@ export const deleteUser = async (req: Request<{ id: string }, {}, {}>, res: Resp
     if (!user) {
       return res.status(404).json({
         error: 'Not Found',
-        message: 'User not found.',
+        message: 'User not found',
       });
     }
 
     res.status(200).json({ id });
   } catch (error) {
-    handleServerError(error, 'An error occurred while deleting user data.', res);
+    handleServerError(error, 'An error occurred while deleting user data', res);
   }
 };
