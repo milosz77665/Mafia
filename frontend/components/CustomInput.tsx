@@ -25,6 +25,7 @@ interface CustomInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
+  placeholderColor?: string;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
   onFocus?: () => void;
@@ -37,6 +38,7 @@ const CustomInput: FC<CustomInputProps> = ({
   value,
   onChangeText,
   placeholder,
+  placeholderColor = colors.placeholderColor,
   containerStyle,
   inputStyle,
   onFocus,
@@ -51,7 +53,7 @@ const CustomInput: FC<CustomInputProps> = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={colors.grey}
+        placeholderTextColor={placeholderColor}
         onFocus={onFocus}
         onBlur={onBlur}
         maxLength={maxLength}
