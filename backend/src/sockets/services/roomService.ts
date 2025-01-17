@@ -205,9 +205,10 @@ export const roomService = (socket: Socket, io: Server) => {
 
       await user.save();
 
-      socket.to(roomId).emit('playerReady', {
+      io.to(roomId).emit('playerReady', {
         message: `Player ${id} is ready`,
-        playerId: id,
+        id: user._id,
+        isReady: user.isReady,
       });
 
       console.log(`Player ${id} is ready`);
@@ -231,9 +232,10 @@ export const roomService = (socket: Socket, io: Server) => {
 
       await user.save();
 
-      socket.to(roomId).emit('playerReady', {
+      io.to(roomId).emit('playerReady', {
         message: `Player ${id} is not ready`,
-        playerId: id,
+        id: user._id,
+        isReady: user.isReady,
       });
 
       console.log(`Player ${id} is not ready`);

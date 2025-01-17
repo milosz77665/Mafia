@@ -28,11 +28,11 @@ const gameSlice = createSlice({
         state.lobby.players = action.payload;
       }
     },
-    updateIsReady(state, action: PayloadAction<string>) {
+    updateIsReady(state, action: PayloadAction<{ id: string; isReady: boolean }>) {
       if (state.lobby) {
         state.lobby.players = state.lobby.players.map((player) => {
-          if (isUserObject(player) && player._id === action.payload) {
-            return { ...player, isReady: !player.isReady };
+          if (isUserObject(player) && player._id === action.payload.id) {
+            return { ...player, isReady: action.payload.isReady };
           } else {
             return player;
           }
