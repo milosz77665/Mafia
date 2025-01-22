@@ -88,7 +88,7 @@ export const onPlayerLeft = (callback: (data: { players: IUser[] }) => void) => 
   socketApi.on('playerLeft', callback);
 };
 
-export const onPlayerReady = (callback: (data: { playerId: string }) => void) => {
+export const onPlayerReady = (callback: (data: { id: string; isReady: boolean }) => void) => {
   socketApi.on('playerReady', callback);
 };
 

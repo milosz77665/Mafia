@@ -102,7 +102,7 @@ const Lobby = () => {
   const handleStartGame = async () => {
     try {
       if (lobby) {
-        const data = startGame(lobby.roomId);
+        const data = await startGame(lobby.roomId);
       }
     } catch (error) {
       handleSocketError(error);
@@ -117,7 +117,6 @@ const Lobby = () => {
         } else {
           await ready(id, lobby.roomId);
         }
-        setCurrentUser((prevUser) => (prevUser ? { ...prevUser, isReady: !prevUser.isReady } : prevUser));
       }
     } catch (error) {
       handleSocketError(error);
@@ -149,7 +148,8 @@ const Lobby = () => {
       console.log(data);
     });
     onPlayerReady((data) => {
-      dispatch(gameActions.updateIsReady(data.playerId));
+      const { id, isReady } = data;
+      dispatch(gameActions.updateIsReady({ id, isReady }));
       console.log(data);
     });
     onRolesAssigned((data) => {
