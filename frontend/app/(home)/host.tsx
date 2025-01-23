@@ -10,8 +10,7 @@ import { useNicknameHandler } from '@/hooks/useNicknameHandler';
 import { useUserDataManager } from '@/hooks/useUserDataManager';
 import socketApi from '@/api/socketApi';
 import { createLobby } from '@/api/lobbyApi';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { useDispatch } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 
@@ -111,7 +110,6 @@ const style = StyleSheet.create({
 
 const Host = () => {
   const dispatch = useDispatch();
-  const id = useSelector((state: RootState) => state.user.id);
   const { handleSocketError } = useSocketErrorHandler();
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
@@ -122,8 +120,8 @@ const Host = () => {
   };
 
   const handleCreateLobby = async () => {
-    const success = await manageUserData(nickname);
-    if (!success) return;
+    const id = await manageUserData(nickname);
+    if (!id) return;
     try {
       socketApi.connect();
       const data = await createLobby(id, maxPlayers);
