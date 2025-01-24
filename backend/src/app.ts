@@ -21,7 +21,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.use('/api/user', userRoutes);
+app.use('/users', userRoutes);
 
 mongoose
   .connect(mongodbUri)
