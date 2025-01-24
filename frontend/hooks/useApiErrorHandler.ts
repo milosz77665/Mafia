@@ -16,12 +16,12 @@ export const useApiErrorHandler = (api: AxiosInstance) => {
   useEffect(() => {
     const interceptor = api.interceptors.response.use(
       (response) => response,
-      (error: AxiosError<ApiErrorData>) => {
+      async (error: AxiosError<ApiErrorData>) => {
         if (error.response) {
           const { error: title, message } = error.response.data;
 
           if (message === 'User not found') {
-            removeFromStorage('id');
+            await removeFromStorage('id');
             dispatch(userActions.setId(''));
           }
 
