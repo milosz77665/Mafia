@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import React from 'react';
 import { Image, Text, StyleSheet, View, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { colors } from '@/constants/colors';
@@ -61,10 +61,20 @@ interface PlayerCardProps {
 }
 
 const PlayerCard: FC<PlayerCardProps> = ({ nickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle }) => {
+  const [imageError, setImageError] = useState<boolean>(false);
+
   return (
     <View style={[style.playerCard, playerCardStyle]}>
       <View style={style.avatarContainer}>
-        {avatarUrl ? <Image source={{ uri: avatarUrl }} style={style.avatar} /> : <AvatarIcon />}
+        {avatarUrl && !imageError ? (
+          <Image
+            source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}${avatarUrl}` }}
+            style={style.avatar}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <AvatarIcon />
+        )}
       </View>
 
       <View style={style.playerInfoContainer}>
