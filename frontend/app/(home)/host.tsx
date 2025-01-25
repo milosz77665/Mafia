@@ -13,6 +13,7 @@ import { createLobby } from '@/api/lobbyApi';
 import { useDispatch } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
+import AvatarPicker from '@/components/AvatarPicker';
 
 const style = StyleSheet.create({
   hostContainer: {
@@ -32,8 +33,8 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
   },
 
-  nickContainer: {
-    marginTop: 40,
+  userContainer: {
+    marginTop: 25,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -41,7 +42,7 @@ const style = StyleSheet.create({
   },
 
   nickInputContainer: {
-    marginTop: 10,
+    marginTop: 20,
     height: 40,
     minWidth: 120,
   },
@@ -55,7 +56,7 @@ const style = StyleSheet.create({
   },
 
   lobbySizeContainer: {
-    marginTop: 60,
+    marginTop: 30,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -69,7 +70,7 @@ const style = StyleSheet.create({
   },
 
   sliderContainer: {
-    marginTop: 10,
+    marginTop: 5,
   },
 
   slider: {
@@ -87,7 +88,7 @@ const style = StyleSheet.create({
 
   ratioInfoContainer: {
     flexDirection: 'row',
-    marginTop: 50,
+    marginTop: 20,
   },
 
   citizensNumber: {
@@ -100,11 +101,11 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 100,
+    marginTop: 60,
   },
 
   backButton: {
-    marginTop: 30,
+    marginTop: 40,
   },
 });
 
@@ -142,8 +143,8 @@ const Host = () => {
         <CustomText style={style.titleText}>Host Game</CustomText>
       </View>
 
-      <View style={style.nickContainer}>
-        <CustomText style={style.label}>Your nickname</CustomText>
+      <View style={style.userContainer}>
+        <AvatarPicker />
         <CustomInput
           containerStyle={style.nickInputContainer}
           inputStyle={style.nickInput}
@@ -154,7 +155,6 @@ const Host = () => {
       </View>
 
       <View style={style.lobbySizeContainer}>
-        <CustomText style={style.label}>Set lobby size</CustomText>
         <CustomText style={style.sliderCurrentNumber}>{maxPlayers}</CustomText>
         <CustomSlider
           sliderStyle={style.slider}
