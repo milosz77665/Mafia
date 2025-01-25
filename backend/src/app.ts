@@ -19,7 +19,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Auth-Token'],
   })
 );
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '2mb' }));
 
 app.use('/users', userRoutes);
 
