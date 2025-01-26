@@ -24,6 +24,7 @@ const HomeLayout = () => {
     const loadUserData = async () => {
       const nickname = await getFromStorage('nickname');
       const id = await getFromStorage('id');
+      const avatar = await getFromStorage('avatar');
 
       if (nickname) {
         dispatch(userActions.setNickname(nickname));
@@ -32,6 +33,11 @@ const HomeLayout = () => {
 
       if (id) {
         dispatch(userActions.setId(id));
+      }
+
+      if (avatar) {
+        dispatch(userActions.setAvatar(`${process.env.EXPO_PUBLIC_API_URL}${avatar}`));
+        dispatch(userActions.resetIsAvatarChanged());
       }
     };
 

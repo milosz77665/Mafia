@@ -19,6 +19,7 @@ export const useUserDataManager = () => {
         dispatch(userActions.setId(data.id));
         dispatch(userActions.resetIsAvatarChanged());
         await saveInStorage('id', data.id);
+        await saveInStorage('avatar', data.avatarUrl);
         return data.id;
       } else {
         return;
@@ -29,6 +30,7 @@ export const useUserDataManager = () => {
       if (data) {
         dispatch(userActions.resetIsNicknameChanged());
         dispatch(userActions.resetIsAvatarChanged());
+        await saveInStorage('avatar', data.avatarUrl);
         return data.id;
       } else {
         return;

@@ -3,6 +3,7 @@ import api from './api';
 type UserResponse = {
   id: string;
   nickname: string;
+  avatarUrl: string;
 };
 
 export const createUser = async ({
