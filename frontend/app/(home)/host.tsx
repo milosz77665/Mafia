@@ -8,6 +8,12 @@ import CustomSlider from '@/components/CustomSlider';
 import { colors } from '@/constants/colors';
 import { useNicknameHandler } from '@/hooks/useNicknameHandler';
 import { useUserDataManager } from '@/hooks/useUserDataManager';
+import socketApi from '@/api/socketApi';
+import { createLobby } from '@/api/lobbyApi';
+import { useDispatch } from 'react-redux';
+import { gameActions } from '@/redux/reducers/gameReducer';
+import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
+import AvatarPicker from '@/components/AvatarPicker';
 
 const style = StyleSheet.create({
   hostContainer: {
@@ -27,8 +33,8 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
   },
 
-  nickContainer: {
-    marginTop: 40,
+  userContainer: {
+    marginTop: 25,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -36,7 +42,7 @@ const style = StyleSheet.create({
   },
 
   nickInputContainer: {
-    marginTop: 10,
+    marginTop: 20,
     height: 40,
     minWidth: 120,
   },
@@ -50,7 +56,7 @@ const style = StyleSheet.create({
   },
 
   lobbySizeContainer: {
-    marginTop: 60,
+    marginTop: 30,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -64,7 +70,7 @@ const style = StyleSheet.create({
   },
 
   sliderContainer: {
-    marginTop: 10,
+    marginTop: 5,
   },
 
   slider: {
@@ -82,7 +88,7 @@ const style = StyleSheet.create({
 
   ratioInfoContainer: {
     flexDirection: 'row',
-    marginTop: 50,
+    marginTop: 20,
   },
 
   citizensNumber: {
@@ -95,26 +101,40 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 100,
+    marginTop: 60,
   },
 
   backButton: {
-    marginTop: 30,
+    marginTop: 40,
   },
 });
 
 const Host = () => {
+  const dispatch = useDispatch();
+  const { handleSocketError } = useSocketErrorHandler();
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
-  const [sliderValue, setSliderValue] = useState<number>(10);
+  const [maxPlayers, setMaxPlayers] = useState<number>(10);
 
   const getNumberOfMafia = (numberOfPlayers: number): number => {
     return Math.round(Math.sqrt(numberOfPlayers) / 2);
   };
 
   const handleCreateLobby = async () => {
-    await manageUserData(nickname);
-    router.replace('/lobby');
+    const id = await manageUserData(nickname);
+    if (!id) return;
+    try {
+      socketApi.connect();
+      const data = await createLobby(id, maxPlayers);
+
+      if (data.lobby) {
+        dispatch(gameActions.setLobby(data.lobby));
+      }
+
+      router.replace('/lobby');
+    } catch (error) {
+      handleSocketError(error);
+    }
   };
 
   return (
@@ -123,8 +143,8 @@ const Host = () => {
         <CustomText style={style.titleText}>Host Game</CustomText>
       </View>
 
-      <View style={style.nickContainer}>
-        <CustomText style={style.label}>Your nickname</CustomText>
+      <View style={style.userContainer}>
+        <AvatarPicker />
         <CustomInput
           containerStyle={style.nickInputContainer}
           inputStyle={style.nickInput}
@@ -135,14 +155,13 @@ const Host = () => {
       </View>
 
       <View style={style.lobbySizeContainer}>
-        <CustomText style={style.label}>Set lobby size</CustomText>
-        <CustomText style={style.sliderCurrentNumber}>{sliderValue}</CustomText>
+        <CustomText style={style.sliderCurrentNumber}>{maxPlayers}</CustomText>
         <CustomSlider
           sliderStyle={style.slider}
           sliderContainerStyle={style.sliderContainer}
-          value={sliderValue}
+          value={maxPlayers}
           onValueChange={(value) => {
-            setSliderValue(value);
+            setMaxPlayers(value);
           }}
           minimumValue={6}
           maximumValue={20}
@@ -155,11 +174,9 @@ const Host = () => {
 
       <View style={style.ratioInfoContainer}>
         <CustomText style={style.label}>Citizens: </CustomText>
-        <CustomText style={[style.label, style.citizensNumber]}>
-          {sliderValue - getNumberOfMafia(sliderValue)}
-        </CustomText>
+        <CustomText style={[style.label, style.citizensNumber]}>{maxPlayers - getNumberOfMafia(maxPlayers)}</CustomText>
         <CustomText style={style.label}>Mafia: </CustomText>
-        <CustomText style={[style.label, style.mafiaNumber]}>{getNumberOfMafia(sliderValue)}</CustomText>
+        <CustomText style={[style.label, style.mafiaNumber]}>{getNumberOfMafia(maxPlayers)}</CustomText>
       </View>
 
       <View style={style.buttonsContainer}>

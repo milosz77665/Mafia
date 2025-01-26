@@ -10,8 +10,8 @@ export const useNicknameHandler = () => {
   const dispatch = useDispatch();
 
   const debouncedSaveNickname = useMemo(() => {
-    return debounce((newNickname: string) => {
-      saveInStorage('nickname', newNickname);
+    return debounce(async (newNickname: string) => {
+      await saveInStorage('nickname', newNickname);
     }, 500);
   }, []);
 

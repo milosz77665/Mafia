@@ -3,7 +3,8 @@ export const colors = {
   white: '#d4d4d4',
   grey: '#585355',
   lightGrey: '#eeeeee',
-  disabledGrey: '#787174',
+  placeholderColor: '#bcb8ba',
+  disabledGrey: '#938d90',
   errorWhite: '#fff',
   errorRed: '#E54B4B',
 };

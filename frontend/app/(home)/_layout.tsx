@@ -27,6 +27,7 @@ const HomeLayout = () => {
 
       if (nickname) {
         dispatch(userActions.setNickname(nickname));
+        dispatch(userActions.resetIsNicknameChanged());
       }
 
       if (id) {

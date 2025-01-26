@@ -2,6 +2,8 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { errorActions } from '@/redux/reducers/errorReducer';
 import { AxiosInstance, AxiosError } from 'axios';
+import { removeFromStorage } from '@/storage/storageHandler';
+import { userActions } from '@/redux/reducers/userReducer';
 
 interface ApiErrorData {
   error: string;
@@ -14,9 +16,14 @@ export const useApiErrorHandler = (api: AxiosInstance) => {
   useEffect(() => {
     const interceptor = api.interceptors.response.use(
       (response) => response,
-      (error: AxiosError<ApiErrorData>) => {
+      async (error: AxiosError<ApiErrorData>) => {
         if (error.response) {
           const { error: title, message } = error.response.data;
+
+          if (message === 'User not found') {
+            await removeFromStorage('id');
+            dispatch(userActions.setId(''));
+          }
 
           dispatch(
             errorActions.showError({

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface soundState {
+interface SoundState {
   musicVolume: number;
 }
 
-const soundInitialState: soundState = {
+const soundInitialState: SoundState = {
   musicVolume: 1.0,
 };
 

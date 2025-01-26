@@ -1,7 +1,8 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import React from 'react';
-import { Image, Text, StyleSheet, View, StyleProp, ViewStyle, TextStyle, ImageSourcePropType } from 'react-native';
+import { Image, Text, StyleSheet, View, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { colors } from '@/constants/colors';
+import AvatarIcon from '@/assets/icons/AvatarIcon';
 
 const style = StyleSheet.create({
   playerCard: {
@@ -59,22 +60,28 @@ interface PlayerCardProps {
   nicknameTextStyle?: StyleProp<TextStyle>;
 }
 
-const PlayerCard: FC<PlayerCardProps> = ({nickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle}) => {
+const PlayerCard: FC<PlayerCardProps> = ({ nickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle }) => {
+  const [imageError, setImageError] = useState<boolean>(false);
+
   return (
     <View style={[style.playerCard, playerCardStyle]}>
       <View style={style.avatarContainer}>
-        {avatarUrl && <Image source={{ uri: avatarUrl }} style={style.avatar} />}
+        {avatarUrl && !imageError ? (
+          <Image
+            source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}${avatarUrl}` }}
+            style={style.avatar}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <AvatarIcon />
+        )}
       </View>
 
       <View style={style.playerInfoContainer}>
         <Text style={[style.nicknameText, nicknameTextStyle]}>{nickname}</Text>
       </View>
 
-      {icon && (
-        <View style={style.iconContainer}>
-          {icon}
-        </View>
-      )}
+      {icon && <View style={style.iconContainer}>{icon}</View>}
     </View>
   );
 };

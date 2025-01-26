@@ -5,22 +5,34 @@ type UserResponse = {
   nickname: string;
 };
 
-export const createUser = async (nickname: string): Promise<UserResponse | null> => {
-  const response = await api.post<UserResponse>('/api/user/new', { nickname });
-
-  if ('error' in response) {
+export const createUser = async ({
+  nickname,
+  avatar,
+}: {
+  nickname: string;
+  avatar: string;
+}): Promise<UserResponse | null> => {
+  try {
+    const response = await api.post<UserResponse>('/users', { nickname, avatar });
+    return response.data;
+  } catch (error) {
     return null;
   }
-
-  return response.data;
 };
 
-export const updateUser = async (id: string, nickname: string): Promise<UserResponse | null> => {
-  const response = await api.patch<UserResponse>(`/api/user/update/${id}`, { nickname });
-
-  if ('error' in response) {
+export const updateUser = async ({
+  id,
+  nickname,
+  avatar,
+}: {
+  id: string;
+  nickname: string;
+  avatar: string;
+}): Promise<UserResponse | null> => {
+  try {
+    const response = await api.patch<UserResponse>(`/users/${id}`, { nickname, avatar });
+    return response.data;
+  } catch (error) {
     return null;
   }
-
-  return response.data;
 };

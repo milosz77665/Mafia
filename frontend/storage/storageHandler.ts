@@ -1,4 +1,4 @@
-import { getItemAsync, setItemAsync } from 'expo-secure-store';
+import { deleteItemAsync, getItemAsync, setItemAsync } from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 export const saveInStorage = async (key: string, value: string) => {
@@ -27,4 +27,16 @@ export const getFromStorage = async (key: string) => {
   }
 
   return value;
+};
+
+export const removeFromStorage = async (key: string) => {
+  try {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      await deleteItemAsync(key);
+    } else {
+      localStorage.removeItem(key);
+    }
+  } catch (error) {
+    console.log(`Error removing ${key}: ${error}`);
+  }
 };

@@ -19,9 +19,9 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Auth-Token'],
   })
 );
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '2mb' }));
 
-app.use('/api/user', userRoutes);
+app.use('/users', userRoutes);
 
 mongoose
   .connect(mongodbUri)
