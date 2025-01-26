@@ -32,6 +32,7 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
   },
   userContainer: {
+  
     marginTop: 25,
     display: 'flex',
     alignItems: 'center',
@@ -51,6 +52,7 @@ const style = StyleSheet.create({
     width: 160,
   },
   lobbySizeContainer: {
+
     marginTop: 30,
     display: 'flex',
     alignItems: 'center',
@@ -125,7 +127,7 @@ const Host = () => {
       setTimeout(() => {
         setIsLoading(false); 
         router.replace('/lobby');
-      }, 2000); 
+      }); 
     } catch (error) {
       handleSocketError(error);
       setIsLoading(false); 

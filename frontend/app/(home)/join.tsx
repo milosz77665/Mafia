@@ -112,7 +112,7 @@ const Join = () => {
       setTimeout(() => {
         setIsLoading(false); 
         router.replace('/lobby');
-      }, 2000); 
+      }); 
     } catch (error) {
       handleSocketError(error);
       setIsLoading(false); 
