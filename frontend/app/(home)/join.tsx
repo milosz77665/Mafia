@@ -11,6 +11,7 @@ import { joinLobby } from '@/api/lobbyApi';
 import { useDispatch } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
+import AvatarPicker from '@/components/AvatarPicker';
 
 const style = StyleSheet.create({
   joinContainer: {
@@ -21,7 +22,7 @@ const style = StyleSheet.create({
     flex: 1,
   },
 
-  nickContainer: {
+  userContainer: {
     marginTop: 40,
     display: 'flex',
     alignItems: 'center',
@@ -30,7 +31,7 @@ const style = StyleSheet.create({
   },
 
   nickInputContainer: {
-    marginTop: 10,
+    marginTop: 20,
     height: 40,
     minWidth: 120,
   },
@@ -53,7 +54,7 @@ const style = StyleSheet.create({
   },
 
   gameIdContainer: {
-    marginTop: 100,
+    marginTop: 25,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -74,7 +75,7 @@ const style = StyleSheet.create({
   },
 
   buttonsContainer: {
-    marginTop: 150,
+    marginTop: 70,
     width: 143,
   },
 
@@ -112,16 +113,6 @@ const Join = () => {
       <View>
         <CustomText style={style.titleText}>Join Game</CustomText>
       </View>
-      <View style={style.nickContainer}>
-        <CustomText style={style.label}>Your nickname</CustomText>
-        <CustomInput
-          containerStyle={style.nickInputContainer}
-          inputStyle={style.nickInput}
-          value={nickname}
-          onChangeText={handleNicknameChange}
-          maxLength={12}
-        />
-      </View>
 
       <View style={style.gameIdContainer}>
         <CustomText style={style.label}>Game ID</CustomText>
@@ -135,6 +126,17 @@ const Join = () => {
           }}
           maxLength={5}
           keyboardType="numeric"
+        />
+      </View>
+
+      <View style={style.userContainer}>
+        <AvatarPicker />
+        <CustomInput
+          containerStyle={style.nickInputContainer}
+          inputStyle={style.nickInput}
+          value={nickname}
+          onChangeText={handleNicknameChange}
+          maxLength={12}
         />
       </View>
 

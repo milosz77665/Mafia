@@ -7,11 +7,11 @@ import { userActions } from '@/redux/reducers/userReducer';
 export const useSocketErrorHandler = () => {
   const dispatch = useDispatch();
 
-  const handleSocketError = (error: unknown) => {
+  const handleSocketError = async (error: unknown) => {
     const response = error as lobbyResponse;
 
     if (response.message === 'User does not exist') {
-      removeFromStorage('id');
+      await removeFromStorage('id');
       dispatch(userActions.setId(''));
     }
 
