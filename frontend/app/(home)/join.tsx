@@ -117,7 +117,7 @@ const Join = () => {
   };
 
   if (isLoading) {
-    return <Loader loading={isLoading} message="Joining game..." />;
+    return <Loader message="Joining game..." />;
   }
 
   return (

@@ -171,8 +171,7 @@ const Lobby = () => {
   if (isGameStarting) {
     return (
       <View style={style.lobbyContainer}>
-        <Loader loading={isGameStarting} message="Starting game..."/>
-         
+        <Loader message="Starting game..."/>
         <CustomButton buttonStyle={style.backButton} onPress={handleLeave}>
               Leave
         </CustomButton>

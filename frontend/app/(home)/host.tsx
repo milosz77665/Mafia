@@ -131,7 +131,7 @@ const Host = () => {
   };
 
   if (isLoading) {
-    return <Loader loading={isLoading} message="Creating lobby..." />;
+    return <Loader message="Creating lobby..." />;
   }
 
   return (

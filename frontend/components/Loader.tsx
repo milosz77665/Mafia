@@ -16,7 +16,6 @@ const style = StyleSheet.create({
 });
 
 interface LoaderProps {
-  loading: boolean;
   size?: 'small' | 'large';
   color?: string;
   message?: string;
@@ -25,7 +24,6 @@ interface LoaderProps {
 }
 
 const Loader: FC<LoaderProps> = ({
-  loading,
   size = 'large',
   color = colors.grey,
   message,
