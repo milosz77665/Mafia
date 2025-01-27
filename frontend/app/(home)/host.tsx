@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
 import CustomButton from '@/components/CustomButton';
 import CustomText from '@/components/CustomText';
 import CustomInput from '@/components/CustomInput';
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import CustomSlider from '@/components/CustomSlider';
@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 import AvatarPicker from '@/components/AvatarPicker';
+import Loader from '@/components/Loader';
 
 const style = StyleSheet.create({
   hostContainer: {
@@ -23,30 +24,26 @@ const style = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
   },
-
   titleText: {
     fontSize: 50,
   },
-
   label: {
     fontSize: 20,
     fontFamily: 'Arial',
   },
-
   userContainer: {
+  
     marginTop: 25,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexDirection: 'column',
   },
-
   nickInputContainer: {
     marginTop: 20,
     height: 40,
     minWidth: 120,
   },
-
   nickInput: {
     textAlign: 'center',
     height: 35,
@@ -54,56 +51,47 @@ const style = StyleSheet.create({
     fontFamily: 'Arial',
     width: 160,
   },
-
   lobbySizeContainer: {
+
     marginTop: 30,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexDirection: 'column',
   },
-
   sliderLabel: {
     fontSize: 18,
     fontWeight: 'bold',
     fontFamily: 'Arial',
   },
-
   sliderContainer: {
     marginTop: 5,
   },
-
   slider: {
     width: 220,
     height: 20,
     transform: [{ scaleY: 1.2 }],
   },
-
   sliderCurrentNumber: {
     marginTop: 10,
     fontSize: 18,
     fontFamily: 'Arial',
     fontWeight: 'bold',
   },
-
   ratioInfoContainer: {
     flexDirection: 'row',
     marginTop: 20,
   },
-
   citizensNumber: {
     fontWeight: 'bold',
     marginRight: 30,
   },
-
   mafiaNumber: {
     fontWeight: 'bold',
   },
-
   buttonsContainer: {
     marginTop: 60,
   },
-
   backButton: {
     marginTop: 40,
   },
@@ -115,27 +103,36 @@ const Host = () => {
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
   const [maxPlayers, setMaxPlayers] = useState<number>(10);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const getNumberOfMafia = (numberOfPlayers: number): number => {
     return Math.round(Math.sqrt(numberOfPlayers) / 2);
   };
 
   const handleCreateLobby = async () => {
+    setIsLoading(true);
     const id = await manageUserData(nickname);
-    if (!id) return;
+    if (!id) {
+      setIsLoading(false); 
+      return;
+    }
     try {
       socketApi.connect();
       const data = await createLobby(id, maxPlayers);
 
       if (data.lobby) {
         dispatch(gameActions.setLobby(data.lobby));
-      }
-
+      } 
       router.replace('/lobby');
     } catch (error) {
+      setIsLoading(false)
       handleSocketError(error);
     }
   };
+
+  if (isLoading) {
+    return <Loader message="Creating lobby..." />;
+  }
 
   return (
     <View style={style.hostContainer}>

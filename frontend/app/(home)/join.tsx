@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 import AvatarPicker from '@/components/AvatarPicker';
+import Loader from '@/components/Loader';
 
 const style = StyleSheet.create({
   joinContainer: {
@@ -90,10 +91,16 @@ const Join = () => {
   const { nickname, handleNicknameChange } = useNicknameHandler();
   const { manageUserData } = useUserDataManager();
   const [gameId, setGameId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleJoin = async () => {
+    setIsLoading(true); 
     const id = await manageUserData(nickname);
-    if (!id) return;
+    if (!id) {
+      setIsLoading(false); 
+      return;
+    }
+
     try {
       socketApi.connect();
       const data = await joinLobby(id, gameId);
@@ -101,12 +108,17 @@ const Join = () => {
       if (data.lobby) {
         dispatch(gameActions.setLobby(data.lobby));
       }
-
       router.replace('/lobby');
+ 
     } catch (error) {
+      setIsLoading(false)
       handleSocketError(error);
     }
   };
+
+  if (isLoading) {
+    return <Loader message="Joining game..." />;
+  }
 
   return (
     <View style={style.joinContainer}>

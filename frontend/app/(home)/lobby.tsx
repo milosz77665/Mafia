@@ -28,6 +28,7 @@ import { IUser } from '@/interfaces/IUser';
 import { isUserObject } from '@/utils/typeGuards';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
+import Loader from '@/components/Loader';
 
 const style = StyleSheet.create({
   lobbyContainer: {
@@ -98,6 +99,7 @@ const Lobby = () => {
   const lobby = useSelector((state: RootState) => state.game.lobby);
   const id = useSelector((state: RootState) => state.user.id);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+  const [isGameStarting, setIsGameStarting] = useState<boolean>(false);
 
   const handleStartGame = async () => {
     try {
@@ -153,6 +155,7 @@ const Lobby = () => {
       console.log(data);
     });
     onRolesAssigned((data) => {
+      setIsGameStarting(true);
       dispatch(gameActions.updatePlayers(data.players));
       console.log(data);
     });
@@ -164,6 +167,17 @@ const Lobby = () => {
       offRolesAssigned();
     };
   }, [lobby, id]);
+
+  if (isGameStarting) {
+    return (
+      <View style={style.lobbyContainer}>
+        <Loader message="Starting game..."/>
+        <CustomButton buttonStyle={style.backButton} onPress={handleLeave}>
+              Leave
+        </CustomButton>
+      </View>
+  );
+  }
 
   return (
     <View style={style.lobbyContainer}>
