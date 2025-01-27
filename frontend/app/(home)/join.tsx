@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 import AvatarPicker from '@/components/AvatarPicker';
-import CustomLoader from '@/components/CustomLoader';
+import Loader from '@/components/Loader';
 
 const style = StyleSheet.create({
   joinContainer: {
@@ -108,19 +108,16 @@ const Join = () => {
       if (data.lobby) {
         dispatch(gameActions.setLobby(data.lobby));
       }
-
-      setTimeout(() => {
-        setIsLoading(false); 
-        router.replace('/lobby');
-      }); 
+      router.replace('/lobby');
+ 
     } catch (error) {
+      setIsLoading(false)
       handleSocketError(error);
-      setIsLoading(false); 
     }
   };
 
   if (isLoading) {
-    return <CustomLoader loading={isLoading} message="Joining game..." />;
+    return <Loader loading={isLoading} message="Joining game..." />;
   }
 
   return (

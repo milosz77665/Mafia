@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { ActivityIndicator, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 import CustomText from './CustomText';
+import { colors } from '@/constants/colors';
 
 const style = StyleSheet.create({
   loaderContainer: {
@@ -14,7 +15,7 @@ const style = StyleSheet.create({
   },
 });
 
-interface CustomLoaderProps {
+interface LoaderProps {
   loading: boolean;
   size?: 'small' | 'large';
   color?: string;
@@ -23,16 +24,14 @@ interface CustomLoaderProps {
   loaderTextStyle?: StyleProp<TextStyle>;
 }
 
-const CustomLoader: FC<CustomLoaderProps> = ({
+const Loader: FC<LoaderProps> = ({
   loading,
   size = 'large',
-  color = '#000',
+  color = colors.grey,
   message,
   loaderContainerStyle,
   loaderTextStyle,
 }) => {
-  if (!loading) return null;
-
   return (
     <View style={[style.loaderContainer, loaderContainerStyle]}>
       <ActivityIndicator size={size} color={color} />
@@ -41,4 +40,4 @@ const CustomLoader: FC<CustomLoaderProps> = ({
   );
 };
 
-export default CustomLoader;
+export default Loader;
