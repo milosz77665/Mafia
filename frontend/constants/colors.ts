@@ -7,4 +7,6 @@ export const colors = {
   disabledGrey: '#938d90',
   errorWhite: '#fff',
   errorRed: '#E54B4B',
+  mafiaRed: '#BF3232',
+  citizenGreen: '#5C8D0E',
 };
