@@ -158,6 +158,7 @@ const Lobby = () => {
       setIsGameStarting(true);
       dispatch(gameActions.updatePlayers(data.players));
       console.log(data);
+      router.replace('/role');
     });
 
     return () => {
@@ -171,12 +172,9 @@ const Lobby = () => {
   if (isGameStarting) {
     return (
       <View style={style.lobbyContainer}>
-        <Loader message="Starting game..."/>
-        <CustomButton buttonStyle={style.backButton} onPress={handleLeave}>
-              Leave
-        </CustomButton>
+        <Loader message="Starting game..." />
       </View>
-  );
+    );
   }
 
   return (
