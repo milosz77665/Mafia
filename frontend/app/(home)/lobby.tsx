@@ -14,10 +14,12 @@ import {
   offPlayerJoined,
   offPlayerLeft,
   offPlayerReady,
+  offReconnectFailed,
   offRolesAssigned,
   onPlayerJoined,
   onPlayerLeft,
   onPlayerReady,
+  onReconnectFailed,
   onRolesAssigned,
   ready,
   startGame,
@@ -160,12 +162,16 @@ const Lobby = () => {
       console.log(data);
       router.replace('/role');
     });
+    onReconnectFailed(() => {
+      router.replace('/');
+    });
 
     return () => {
       offPlayerJoined();
       offPlayerLeft();
       offPlayerReady();
       offRolesAssigned();
+      offReconnectFailed();
     };
   }, [lobby, id]);
 
