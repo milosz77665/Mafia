@@ -330,8 +330,13 @@ export const roomService = (socket: Socket, io: Server) => {
 
               await newHost.save();
             }
-            await room.save();
+            await Promise.all([room.save(), room.populate('players')]);
           }
+
+          socket.to(room.roomId).emit('playerLeft', {
+            message: `Player ${user._id} left the room`,
+            players: room.players,
+          });
           socket.leave(room.roomId);
         }
         user.isHost = false;

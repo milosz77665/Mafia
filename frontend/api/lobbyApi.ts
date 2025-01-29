@@ -96,6 +96,10 @@ export const onRolesAssigned = (callback: (data: { players: IUser[] }) => void) 
   socketApi.on('rolesAssigned', callback);
 };
 
+export const onReconnectFailed = (callback: () => void) => {
+  socketApi.onReconnectFailed(callback);
+};
+
 export const offPlayerJoined = () => {
   socketApi.off('playerJoined');
 };
@@ -110,4 +114,8 @@ export const offPlayerReady = () => {
 
 export const offRolesAssigned = () => {
   socketApi.off('rolesAssigned');
+};
+
+export const offReconnectFailed = () => {
+  socketApi.offReconnectFailed();
 };
