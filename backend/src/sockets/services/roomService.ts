@@ -255,10 +255,10 @@ export const roomService = (socket: Socket, io: Server) => {
       const room = await Room.findOne({ roomId });
       if (!roomExists(room, callback)) return;
 
-      // if (room.players.length < 6) {
-      //   callback({ success: false, message: 'There are not enough players to start the game' });
-      //   return;
-      // }
+      if (room.players.length < 6) {
+        callback({ success: false, message: 'There are not enough players to start the game' });
+        return;
+      }
 
       await room.populate('players');
 
