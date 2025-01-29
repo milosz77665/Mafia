@@ -255,10 +255,10 @@ export const roomService = (socket: Socket, io: Server) => {
       const room = await Room.findOne({ roomId });
       if (!roomExists(room, callback)) return;
 
-      if (room.players.length < 6) {
-        callback({ success: false, message: 'There are not enough players to start the game' });
-        return;
-      }
+      // if (room.players.length < 6) {
+      //   callback({ success: false, message: 'There are not enough players to start the game' });
+      //   return;
+      // }
 
       await room.populate('players');
 
@@ -330,8 +330,13 @@ export const roomService = (socket: Socket, io: Server) => {
 
               await newHost.save();
             }
-            await room.save();
+            await Promise.all([room.save(), room.populate('players')]);
           }
+
+          socket.to(room.roomId).emit('playerLeft', {
+            message: `Player ${user._id} left the room`,
+            players: room.players,
+          });
           socket.leave(room.roomId);
         }
         user.isHost = false;
