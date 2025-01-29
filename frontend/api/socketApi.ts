@@ -43,17 +43,32 @@ class SocketApi {
       console.log('Reconnecting');
       this.socket?.emit('reconnect', { id });
     });
-
-    this.socket.io.on('reconnect_failed', async () => {
-      console.log('Reconnecting failed');
-      this.disconnect();
-    });
   }
 
   public disconnect() {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
+    }
+  }
+
+  public onReconnectFailed(callback: () => void) {
+    if (this.socket) {
+      this.socket.io.on('reconnect_failed', () => {
+        console.log('Reconnecting failed');
+        callback();
+        this.disconnect();
+      });
+    } else {
+      console.error('Socket is not connected');
+    }
+  }
+
+  public offReconnectFailed() {
+    if (this.socket) {
+      this.socket.io.off('reconnect_failed');
+    } else {
+      console.error('Socket is not connected');
     }
   }
 
