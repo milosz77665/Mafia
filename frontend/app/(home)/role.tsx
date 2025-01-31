@@ -22,9 +22,15 @@ const styles = StyleSheet.create({
 
   overlayContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+  },
+
+  fullWidthContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100vw',
+    padding: 3,
+    backgroundColor: 'rgba(0,0,0,0.7)',
   },
 
   countdownContainer: {
@@ -43,11 +49,20 @@ const styles = StyleSheet.create({
     paddingBottom: 70,
   },
 
+  gameCountdownLabel: {
+    fontSize: 20,
+    color: colors.white,
+  },
+
+  gameCountdown: {
+    fontSize: 50,
+    color: colors.white,
+  },
+
   roleLabel: {
     fontSize: 50,
     textTransform: 'uppercase',
     fontWeight: 'bold',
-    opacity: 0.85,
   },
 
   mafiaRole: {
@@ -59,7 +74,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: 220,
+    marginTop: 170,
     maxWidth: 200,
   },
 });
@@ -97,20 +112,26 @@ const RoleScreen = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev === 1) {
-          clearInterval(interval);
-          setIsRoleVisible(true);
+      setCountdown((prevCountdown) => {
+        if (prevCountdown === 1) {
+          setIsRoleVisible((prevIsVisible) => {
+            if (!prevIsVisible) setCountdown(3);
+            return true;
+          });
           return 0;
         } else {
-          return prev - 1;
+          return prevCountdown - 1;
         }
       });
     }, 1000);
+
+    if (countdown === 1 && isRoleVisible) {
+      clearInterval(interval);
+    }
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [countdown]);
 
   const handleLeave = async () => {
     try {
@@ -131,9 +152,15 @@ const RoleScreen = () => {
   ) : (
     <ImageBackground source={currentUser?.role === 'mafia' ? MafiaImg : CitizenImg} style={styles.fullScreenBackground}>
       <View style={styles.overlayContainer}>
-        <CustomText style={[styles.roleLabel, currentUser?.role === 'mafia' ? styles.mafiaRole : styles.citizenRole]}>
-          {currentUser?.role}
-        </CustomText>
+        <View style={styles.fullWidthContainer}>
+          <CustomText style={[styles.roleLabel, currentUser?.role === 'mafia' ? styles.mafiaRole : styles.citizenRole]}>
+            {currentUser?.role}
+          </CustomText>
+        </View>
+        <View style={[styles.fullWidthContainer, { marginTop: 300 }]}>
+          <CustomText style={styles.gameCountdownLabel}>The game will start in</CustomText>
+          <CustomText style={styles.gameCountdown}>{countdown}</CustomText>
+        </View>
         <CustomButton buttonStyle={styles.button} onPress={handleLeave}>
           Leave
         </CustomButton>
