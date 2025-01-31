@@ -8,13 +8,7 @@ import { colors } from '@/constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { isUserObject } from '@/utils/typeGuards';
-import {
-  leaveLobby,
-  offPlayerLeft,
-  offRolesAssigned,
-  onPlayerLeft,
-  onRolesAssigned,
-} from '@/api/lobbyApi';
+import { leaveLobby, offPlayerLeft, offRolesAssigned, onPlayerLeft, onRolesAssigned } from '@/api/lobbyApi';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 import CustomText from '@/components/CustomText';
 
@@ -31,6 +25,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+
+  countdownContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  countdownLabel: {
+    fontSize: 20,
+  },
+
+  countdown: {
+    marginTop: 50,
+    fontSize: 50,
+    paddingBottom: 70,
   },
 
   roleLabel: {
@@ -56,6 +66,8 @@ const styles = StyleSheet.create({
 
 const RoleScreen = () => {
   const dispatch = useDispatch();
+  const [countdown, setCountdown] = useState<number>(3);
+  const [isRoleVisible, setIsRoleVisible] = useState<boolean>(false);
   const { handleSocketError } = useSocketErrorHandler();
   const lobby = useSelector((state: RootState) => state.game.lobby);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
@@ -83,6 +95,23 @@ const RoleScreen = () => {
     };
   }, [lobby, id]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === 1) {
+          clearInterval(interval);
+          setIsRoleVisible(true);
+          return 0;
+        } else {
+          return prev - 1;
+        }
+      });
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   const handleLeave = async () => {
     try {
       if (lobby) {
@@ -94,7 +123,12 @@ const RoleScreen = () => {
     }
   };
 
-  return (
+  return !isRoleVisible ? (
+    <View style={styles.countdownContainer}>
+      <CustomText style={styles.countdownLabel}>Your role will be displayed in</CustomText>
+      <CustomText style={styles.countdown}>{countdown}</CustomText>
+    </View>
+  ) : (
     <ImageBackground source={currentUser?.role === 'mafia' ? MafiaImg : CitizenImg} style={styles.fullScreenBackground}>
       <View style={styles.overlayContainer}>
         <CustomText style={[styles.roleLabel, currentUser?.role === 'mafia' ? styles.mafiaRole : styles.citizenRole]}>
