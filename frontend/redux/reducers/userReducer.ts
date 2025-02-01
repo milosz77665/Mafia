@@ -1,3 +1,4 @@
+import { IUser } from '@/interfaces/IUser';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
@@ -6,6 +7,7 @@ interface UserState {
   avatar: string;
   isAvatarChanged: boolean;
   isNicknameChanged: boolean;
+  currentUser: IUser | null;
 }
 
 const userInitialState: UserState = {
@@ -14,6 +16,7 @@ const userInitialState: UserState = {
   avatar: '',
   isAvatarChanged: false,
   isNicknameChanged: false,
+  currentUser: null,
 };
 
 const userSlice = createSlice({
@@ -30,6 +33,9 @@ const userSlice = createSlice({
     setAvatar(state, action: PayloadAction<string>) {
       state.avatar = action.payload;
       state.isAvatarChanged = true;
+    },
+    setCurrentUser(state, action: PayloadAction<IUser>) {
+      state.currentUser = action.payload;
     },
     resetIsAvatarChanged(state) {
       state.isAvatarChanged = false;
