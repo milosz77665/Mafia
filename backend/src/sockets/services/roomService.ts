@@ -151,6 +151,7 @@ export const roomService = (socket: Socket, io: Server) => {
 
       user.socketId = '';
       user.isReady = false;
+      user.role = 'none';
 
       if (room.players.length === 1) {
         user.isHost = false;
