@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { colors } from '@/constants/colors';
 import CustomButton from '@/components/CustomButton';
 import CustomText from '@/components/CustomText';
