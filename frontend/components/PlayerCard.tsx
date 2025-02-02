@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import React from 'react';
 import { Image, Text, StyleSheet, View, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { colors } from '@/constants/colors';
 import AvatarIcon from '@/assets/icons/AvatarIcon';
@@ -40,7 +39,7 @@ const style = StyleSheet.create({
     color: colors.black,
   },
 
-  iconContainer: {
+  elementContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -55,16 +54,26 @@ const style = StyleSheet.create({
 interface PlayerCardProps {
   nickname: string;
   avatarUrl?: string;
-  icon?: React.ReactNode;
+  leftElement?: React.ReactNode;
+  rightElement?: React.ReactNode;
   playerCardStyle?: StyleProp<ViewStyle>;
   nicknameTextStyle?: StyleProp<TextStyle>;
 }
 
-const PlayerCard: FC<PlayerCardProps> = ({ nickname, avatarUrl, icon, playerCardStyle, nicknameTextStyle }) => {
+const PlayerCard: FC<PlayerCardProps> = ({
+  nickname,
+  avatarUrl,
+  leftElement,
+  rightElement,
+  playerCardStyle,
+  nicknameTextStyle,
+}) => {
   const [imageError, setImageError] = useState<boolean>(false);
 
   return (
     <View style={[style.playerCard, playerCardStyle]}>
+      {leftElement && <View style={style.elementContainer}>{leftElement}</View>}
+
       <View style={style.avatarContainer}>
         {avatarUrl && !imageError ? (
           <Image
@@ -81,7 +90,7 @@ const PlayerCard: FC<PlayerCardProps> = ({ nickname, avatarUrl, icon, playerCard
         <Text style={[style.nicknameText, nicknameTextStyle]}>{nickname}</Text>
       </View>
 
-      {icon && <View style={style.iconContainer}>{icon}</View>}
+      {rightElement && <View style={style.elementContainer}>{rightElement}</View>}
     </View>
   );
 };

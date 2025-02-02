@@ -1,13 +1,9 @@
 import CustomButton from '@/components/CustomButton';
 import CustomText from '@/components/CustomText';
-import PlayerCard from '@/components/PlayerCard';
 import { router } from 'expo-router';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { colors } from '@/constants/colors';
-import CheckIcon from '@/assets/icons/CheckIcon';
-import CrossIcon from '@/assets/icons/CrossIcon';
-import HostIcon from '@/assets/icons/HostIcon';
 import {
   leaveLobby,
   notReady,
@@ -27,10 +23,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { IUser } from '@/interfaces/IUser';
-import { isUserObject } from '@/utils/typeGuards';
 import { gameActions } from '@/redux/reducers/gameReducer';
 import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
 import Loader from '@/components/Loader';
+import PlayerList from '@/components/PlayerList';
+import { userActions } from '@/redux/reducers/userReducer';
+import { errorActions } from '@/redux/reducers/errorReducer';
 
 const style = StyleSheet.create({
   lobbyContainer: {
@@ -59,27 +57,6 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  currentUserContainer: {
-    paddingHorizontal: 19,
-    width: '100%',
-    height: 60,
-  },
-
-  playerListContainer: {
-    width: '100%',
-    flex: 1,
-  },
-
-  playerList: {
-    width: '100%',
-    paddingHorizontal: 20,
-  },
-
-  playerCard: {
-    borderBottomColor: colors.black,
-    borderBottomWidth: 3,
-  },
-
   buttonsContainer: {
     width: 160,
     justifyContent: 'flex-end',
@@ -100,13 +77,13 @@ const Lobby = () => {
   const { handleSocketError } = useSocketErrorHandler();
   const lobby = useSelector((state: RootState) => state.game.lobby);
   const id = useSelector((state: RootState) => state.user.id);
-  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [isGameStarting, setIsGameStarting] = useState<boolean>(false);
 
   const handleStartGame = async () => {
     try {
       if (lobby) {
-        const data = await startGame(lobby.roomId);
+        await startGame(lobby.roomId);
       }
     } catch (error) {
       handleSocketError(error);
@@ -139,10 +116,25 @@ const Lobby = () => {
   };
 
   useEffect(() => {
+    const updateCurrentUser = (players: IUser[], id: string) => {
+      const foundUser = players.find((player) => player._id === id);
+      if (foundUser) {
+        dispatch(userActions.setCurrentUser(foundUser));
+      } else {
+        router.replace('/');
+        dispatch(
+          errorActions.showError({
+            id: Date.now().toString(),
+            title: 'User Not Found',
+            message: 'User data could not be found. Please try again later',
+          })
+        );
+      }
+    };
     if (lobby && id) {
-      const foundUser = lobby.players.find((player): player is IUser => isUserObject(player) && player._id === id);
-      setCurrentUser(foundUser || null);
+      updateCurrentUser(lobby.players, id);
     }
+
     onPlayerJoined((data) => {
       dispatch(gameActions.addPlayer(data.player));
       console.log(data);
@@ -158,7 +150,16 @@ const Lobby = () => {
     });
     onRolesAssigned((data) => {
       setIsGameStarting(true);
-      dispatch(gameActions.updatePlayers(data.players));
+      if (lobby) {
+        dispatch(
+          gameActions.setLobby({
+            ...lobby,
+            players: data.players,
+            isGameStarted: true,
+          })
+        );
+      }
+      updateCurrentUser(data.players, id);
       console.log(data);
       router.replace('/role');
     });
@@ -190,33 +191,9 @@ const Lobby = () => {
       </CustomText>
       <CustomText style={style.lobbyCodeLabel}>Your lobby code:</CustomText>
       <CustomText style={style.lobbyCodeText}>{lobby?.roomId}</CustomText>
-      <View style={style.currentUserContainer}>
-        {currentUser && (
-          <PlayerCard
-            avatarUrl={currentUser.avatarUrl}
-            icon={currentUser.isHost ? <HostIcon /> : currentUser.isReady ? <CheckIcon /> : <CrossIcon />}
-            nickname={currentUser.nickname}
-            playerCardStyle={style.playerCard}
-          />
-        )}
-      </View>
-
-      <View style={style.playerListContainer}>
-        {lobby && (
-          <FlatList
-            data={lobby.players.filter((player): player is IUser => isUserObject(player) && player._id !== id)}
-            keyExtractor={(item) => item._id}
-            contentContainerStyle={style.playerList}
-            renderItem={({ item }) => (
-              <PlayerCard
-                avatarUrl={item.avatarUrl}
-                icon={item.isHost ? <HostIcon /> : item.isReady ? <CheckIcon /> : <CrossIcon />}
-                nickname={item.nickname}
-              />
-            )}
-          />
-        )}
-      </View>
+      {lobby && currentUser && (
+        <PlayerList lobby={lobby} currentUser={currentUser} isGameStarted={lobby.isGameStarted} />
+      )}
 
       <View style={style.buttonsContainer}>
         {currentUser?.isHost ? (

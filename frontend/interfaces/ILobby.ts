@@ -4,7 +4,7 @@ export interface ILobby {
   _id: string;
   roomId: string;
   hostId: string;
-  players: (string | IUser)[];
+  players: IUser[];
   maxPlayers: number;
   numberOfMafia: number;
   isGameStarted: boolean;
