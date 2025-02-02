@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, StyleProp, TextStyle } from 'react-native';
 import PlayerCard from './PlayerCard';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import HostIcon from '@/assets/icons/HostIcon';
@@ -43,9 +43,10 @@ interface PlayerListProps {
   isGameStarted: boolean;
   onPlayerChosen?: (id: string) => void;
   chosenPlayerId?: string;
+  nicknameTextStyle?: StyleProp<TextStyle>;
 }
 
-const PlayerList: FC<PlayerListProps> = ({ lobby, currentUser, isGameStarted, onPlayerChosen, chosenPlayerId }) => {
+const PlayerList: FC<PlayerListProps> = ({ lobby, currentUser, isGameStarted, onPlayerChosen, chosenPlayerId, nicknameTextStyle }) => {
   return (
     <>
       <View style={style.currentUserContainer}>
@@ -58,6 +59,7 @@ const PlayerList: FC<PlayerListProps> = ({ lobby, currentUser, isGameStarted, on
             }
             nickname={currentUser.nickname}
             playerCardStyle={style.playerCard}
+            nicknameTextStyle = {nicknameTextStyle}
           />
         )}
       </View>
