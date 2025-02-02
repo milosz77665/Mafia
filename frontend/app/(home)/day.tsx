@@ -63,7 +63,6 @@ const DayPhaseScreen = () => {
   const [chosenPlayerId, setChosenPlayerId] = useState<string | undefined>(undefined);
   const DayImg = require('@/assets/images/Day_low_sat.png');
 
-
   const handlePlayerChosen = (id: string) => {
     setChosenPlayerId(id);
   };
