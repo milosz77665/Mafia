@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   fullWidthContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100vw',
+    width: 300,
     padding: 3,
     backgroundColor: 'rgba(0,0,0,0.7)',
   },
@@ -103,6 +103,7 @@ const RoleScreen = () => {
     const interval = setInterval(() => {
       if (countdown === 1 && isRoleVisible) {
         clearInterval(interval);
+        router.replace('/day')
       }
       setCountdown((prevCountdown) => {
         if (prevCountdown === 1) {
@@ -116,11 +117,15 @@ const RoleScreen = () => {
         }
       });
     }, 1000);
+    
 
     return () => {
       clearInterval(interval);
+
     };
-  }, [countdown]);
+  }, 
+  [countdown]
+);
 
   const handleLeave = async () => {
     try {
