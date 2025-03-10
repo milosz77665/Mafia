@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   fullWidthContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100vw',
+    width: '100%',
     padding: 3,
     backgroundColor: 'rgba(0,0,0,0.7)',
   },
