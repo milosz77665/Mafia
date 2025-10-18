@@ -1,6 +1,6 @@
 import { Server as HTTPServer } from 'http';
 import { Socket, Server } from 'socket.io';
-import { roomService } from './services/roomService';
+import { roomService } from './services/room/roomService';
 
 export class SocketServer {
   private static instance: SocketServer;
