@@ -2,7 +2,6 @@ import { ImageBackground, StyleSheet, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import { router } from 'expo-router';
-import CustomButton from '@/components/CustomButton';
 import { colors } from '@/constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
@@ -26,7 +25,7 @@ const styles = StyleSheet.create({
   fullWidthContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 300,
+    width: '100%',
     padding: 3,
     backgroundColor: 'rgba(0,0,0,0.7)',
   },
@@ -71,6 +70,16 @@ const styles = StyleSheet.create({
     color: colors.citizenGreen,
   },
 
+  mafiaMembersLabel: {
+    color: colors.mafiaRed,
+    fontSize: 26,
+  },
+
+  mafiaMembers: {
+    color: colors.white,
+    fontSize: 20,
+  },
+
   button: {
     marginTop: 170,
     maxWidth: 200,
@@ -87,6 +96,7 @@ const RoleScreen = () => {
   const id = useSelector((state: RootState) => state.user.id);
   const CitizenImg = require('@/assets/images/Citizen.png');
   const MafiaImg = require('@/assets/images/Mafia.png');
+  const mafiaPlayers = lobby?.players.filter((player) => player.role === 'mafia');
 
   useEffect(() => {
     onPlayerLeft((data) => {
@@ -103,7 +113,7 @@ const RoleScreen = () => {
     const interval = setInterval(() => {
       if (countdown === 1 && isRoleVisible) {
         clearInterval(interval);
-        router.replace('/day')
+        router.replace('/day');
       }
       setCountdown((prevCountdown) => {
         if (prevCountdown === 1) {
@@ -117,15 +127,11 @@ const RoleScreen = () => {
         }
       });
     }, 1000);
-    
 
     return () => {
       clearInterval(interval);
-
     };
-  }, 
-  [countdown]
-);
+  }, [countdown]);
 
   const handleLeave = async () => {
     try {
@@ -155,9 +161,22 @@ const RoleScreen = () => {
           <CustomText style={styles.gameCountdownLabel}>The game will start in</CustomText>
           <CustomText style={styles.gameCountdown}>{countdown}</CustomText>
         </View>
-        <CustomButton buttonStyle={styles.button} onPress={handleLeave}>
-          Leave
-        </CustomButton>
+        {currentUser?.role === 'mafia' && (
+          <View style={[styles.fullWidthContainer, { marginTop: 20 }]}>
+            {mafiaPlayers !== undefined && mafiaPlayers.length > 1 ? (
+              <>
+                <CustomText style={styles.mafiaMembersLabel}>Mafia team:</CustomText>
+                {mafiaPlayers.map((player) => (
+                  <CustomText key={player._id} style={styles.mafiaMembers}>
+                    {player.nickname}
+                  </CustomText>
+                ))}
+              </>
+            ) : (
+              <CustomText style={styles.mafiaMembersLabel}>You are the only member of the mafia</CustomText>
+            )}
+          </View>
+        )}
       </View>
     </ImageBackground>
   );

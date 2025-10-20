@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { colors } from '@/constants/colors';
 import {
   leaveLobby,
-  notReady,
   offPlayerJoined,
   offPlayerLeft,
   offPlayerReady,
@@ -93,11 +92,7 @@ const Lobby = () => {
   const handleReady = async () => {
     try {
       if (lobby && currentUser) {
-        if (currentUser.isReady) {
-          await notReady(id, lobby.roomId);
-        } else {
-          await ready(id, lobby.roomId);
-        }
+        await ready(id, lobby.roomId);
       }
     } catch (error) {
       handleSocketError(error);

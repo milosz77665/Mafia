@@ -56,18 +56,6 @@ export const ready = (id: string, gameId: string): Promise<lobbyResponse> => {
   });
 };
 
-export const notReady = (id: string, gameId: string): Promise<lobbyResponse> => {
-  return new Promise((resolve, reject) => {
-    socketApi.emit('notReady', { id, roomId: gameId }, (response: lobbyResponse) => {
-      if (response.success) {
-        resolve(response);
-      } else {
-        reject(response);
-      }
-    });
-  });
-};
-
 export const startGame = (gameId: string): Promise<lobbyResponse> => {
   return new Promise((resolve, reject) => {
     socketApi.emit('startGame', { roomId: gameId }, (response: lobbyResponse) => {
