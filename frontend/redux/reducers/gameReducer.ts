@@ -16,7 +16,8 @@ const gameSlice = createSlice({
   initialState: gameInitialState,
   reducers: {
     setLobby(state, action: PayloadAction<ILobby>) {
-      state.lobby = action.payload;
+      const numberOfMafia = Math.round(Math.sqrt(action.payload.players.length) / 2);
+      state.lobby = { ...action.payload, numberOfMafia };
     },
     addPlayer(state, action: PayloadAction<IUser>) {
       if (state.lobby) {
