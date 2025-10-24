@@ -5,8 +5,7 @@ import { router } from 'expo-router';
 import { colors } from '@/constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { gameActions } from '@/redux/reducers/gameReducer';
-import { leaveLobby, offPlayerLeft, onPlayerLeft } from '@/api/lobbyApi';
-import { useSocketErrorHandler } from '@/hooks/useSocketErrorHandler';
+import { offPlayerLeft, onPlayerLeft } from '@/api/lobbyApi';
 import CustomText from '@/components/CustomText';
 
 const styles = StyleSheet.create({
@@ -90,10 +89,8 @@ const RoleScreen = () => {
   const dispatch = useDispatch();
   const [countdown, setCountdown] = useState<number>(3);
   const [isRoleVisible, setIsRoleVisible] = useState<boolean>(false);
-  const { handleSocketError } = useSocketErrorHandler();
   const lobby = useSelector((state: RootState) => state.game.lobby);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const id = useSelector((state: RootState) => state.user.id);
   const CitizenImg = require('@/assets/images/Citizen.png');
   const MafiaImg = require('@/assets/images/Mafia.png');
   const mafiaPlayers = lobby?.players.filter((player) => player.role === 'mafia');
@@ -132,17 +129,6 @@ const RoleScreen = () => {
       clearInterval(interval);
     };
   }, [countdown]);
-
-  const handleLeave = async () => {
-    try {
-      if (lobby) {
-        await leaveLobby(id, lobby.roomId);
-        router.replace('/');
-      }
-    } catch (error) {
-      handleSocketError(error);
-    }
-  };
 
   return !isRoleVisible ? (
     <View style={styles.countdownContainer}>
